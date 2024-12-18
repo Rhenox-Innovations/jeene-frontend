@@ -1,0 +1,33 @@
+import axios from "axios";
+
+const apiRequest = axios.create({
+  baseURL: "https://jeeneapi.rhenoxinnovations.com/api",
+  timeout: 10000,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+apiRequest.interceptors.request.use(
+  (config) => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user?.token) {
+      config.headers.Authorization = `Bearer ${user.token}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+apiRequest.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem("token");
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default apiRequest;
