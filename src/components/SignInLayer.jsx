@@ -1,7 +1,7 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import apiRequest from "../helper/axios";
 import ErrorAlert from "./ErrorAlert";
 import { login } from "../redux/actions/authSlice";

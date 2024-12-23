@@ -1,7 +1,16 @@
 const Endpoints = {
-    SIGN_IN: "/Authentication/Login",
-    GET_ROLES: "/Role/GetAll",
-    GET_CATEGORIES: "/Category/GetAll"
-}
+  //Authentication
+  SIGN_IN: "/Authentication/Login",
 
-export { Endpoints }
+  //Categories
+  GET_CATEGORIES: "/Category/GetAll",
+
+  //User
+  EDIT_USER_PROFILE: "/User/EditUserProfile",
+  GET_USER_DETAILS: "/User/GetUserDetails",
+
+  //Roles
+  GET_ROLES: "/Role/GetAll",
+};
+
+export { Endpoints };

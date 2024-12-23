@@ -4,6 +4,9 @@ import { useSelector } from 'react-redux';
 import apiRequest from '../helper/axios';
 import { Endpoints } from '../helper/common/Endpoint';
 import { MultipleSelect } from 'react-select-material-ui';
+import { ThreeDots } from 'react-loader-spinner';
+import { useDispatch } from 'react-redux';
+import { updateUserData } from '../redux/actions/authSlice';
 
 const ViewProfileLayer = ({page}) => {
     const {userData} = useSelector(state => state.auth.user);
@@ -17,7 +20,9 @@ const ViewProfileLayer = ({page}) => {
     const [interests, setInterests] = useState(userData?.interests);
     const [roleData, setRoleData] = useState([]);
     const [interestData, setInterestData] = useState([]);
+    const [loading, setLoading] = useState(false);
 
+    const dispatch = useDispatch();
 
     useEffect(() => {
         getRoles();
@@ -43,6 +48,7 @@ const ViewProfileLayer = ({page}) => {
                 setImagePreview(e.target.result);
             };
             reader.readAsDataURL(input.target.files[0]);
+            console.log('image: ', imagePreview)
         }
     };
 
@@ -62,6 +68,39 @@ const ViewProfileLayer = ({page}) => {
             setInterests(interestData?.filter(x => values.includes(x.id)));
         }
     }
+
+    const handleSubmit = async () => {
+        setLoading(true);
+        const requestData = {
+            id: userData?.id,
+            fullName: fullName,
+            bio: bio,
+            profilePicture: '',
+            interests: interests.map(x => x.id)
+        }
+
+        try{
+            var result = await apiRequest.put(Endpoints.EDIT_USER_PROFILE + "/" + userData?.id, requestData);
+            setLoading(false);
+            if(result?.data?.success){
+                setLoading(true);
+                result = await apiRequest.get(Endpoints.GET_USER_DETAILS + "/" + userData?.id);
+                setLoading(false);
+                if(result?.data?.success && result?.data?.data){
+                    dispatch(updateUserData(result?.data?.data));
+                } 
+            }
+        }
+        catch (err) {
+            setLoading(false);
+        }
+    }
+
+    const handleCancel = async () => {
+
+    }
+
+
     return (
         <div className="row gy-4">
             <div className="col-lg-4">
@@ -332,13 +371,25 @@ const ViewProfileLayer = ({page}) => {
                                         <button
                                             type="button"
                                             className="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8"
+                                            onClick={handleCancel}
                                         >
                                             Cancel
                                         </button>
                                         <button
                                             type="button"
-                                            className="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8"
+                                            className="d-flex justify-content-center btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8"
+                                            onClick={handleSubmit}
                                         >
+                                            <ThreeDots
+                                                            height="22"
+                                                            width="22"
+                                                            radius="5"
+                                                            color="#fff"
+                                                            ariaLabel="loading"
+                                                            wrapperStyle={{marginRight: 5}}
+                                                            wrapperClass=""
+                                                            visible={loading}
+                                                          />
                                             Save
                                         </button>
                                     </div>
