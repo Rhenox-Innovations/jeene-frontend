@@ -1,11 +1,29 @@
 import { Icon } from '@iconify/react/dist/iconify.js';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import apiRequest from '../helper/axios';
+import { Endpoints } from '../helper/common/Endpoint';
+import { MultipleSelect } from 'react-select-material-ui';
 
-const ViewProfileLayer = () => {
-    const [imagePreview, setImagePreview] = useState('assets/images/user-grid/user-grid-img13.png');
+const ViewProfileLayer = ({page}) => {
+    const {userData} = useSelector(state => state.auth.user);
+    const [imagePreview, setImagePreview] = useState(userData?.profilePicture ? userData?.profilePicture : '/assets/images/user.png' );
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+    const [fullName, setFullName] = useState(userData?.fullName);
+    const [email] = useState(userData?.email);
+    const [role, setRole] = useState(userData?.roles?.[0]);
+    const [bio, setBio] = useState(userData?.fullName);
+    const [interests, setInterests] = useState(userData?.interests);
+    const [roleData, setRoleData] = useState([]);
+    const [interestData, setInterestData] = useState([]);
 
+
+    useEffect(() => {
+        getRoles();
+        getInterests();
+    }, []);
+    
     // Toggle function for password field
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);
@@ -16,6 +34,8 @@ const ViewProfileLayer = () => {
         setConfirmPasswordVisible(!confirmPasswordVisible);
     };
 
+    
+
     const readURL = (input) => {
         if (input.target.files && input.target.files[0]) {
             const reader = new FileReader();
@@ -25,24 +45,36 @@ const ViewProfileLayer = () => {
             reader.readAsDataURL(input.target.files[0]);
         }
     };
+
+    const getRoles = async () => {
+        const result = await apiRequest.get(Endpoints.GET_ROLES);
+        setRoleData(result?.data?.data)
+    }
+
+    const getInterests = async () => {
+        const result = await apiRequest.get(Endpoints.GET_CATEGORIES);
+        setInterestData(result?.data?.data);
+    }
+
+    const handleInterestChange = (values) => {
+        setInterests([]);
+        if(values?.length > 0){
+            setInterests(interestData?.filter(x => values.includes(x.id)));
+        }
+    }
     return (
         <div className="row gy-4">
             <div className="col-lg-4">
                 <div className="user-grid-card position-relative border radius-16 overflow-hidden bg-base h-100">
-                    <img
-                        src="assets/images/user-grid/user-grid-bg1.png"
-                        alt=""
-                        className="w-100 object-fit-cover"
-                    />
-                    <div className="pb-24 ms-16 mb-24 me-16  mt--100">
+                    <div className="pb-24 ms-16 mb-24 me-16">
                         <div className="text-center border border-top-0 border-start-0 border-end-0">
                             <img
-                                src="assets/images/user-grid/user-grid-img14.png"
+                                src={userData?.profilePicture ? userData?.profilePicture :  '/assets/images/user.png'}
                                 alt=""
                                 className="border br-white border-width-2-px w-200-px h-200-px rounded-circle object-fit-cover"
                             />
-                            <h6 className="mb-0 mt-16">Jacob Jones</h6>
-                            <span className="text-secondary-light mb-16">ifrandom@gmail.com</span>
+                            <h6 className="mb-0 mt-16">{userData?.fullName}</h6>
+                            <span className="text-secondary-light mb-16">{userData?.email}</span>
                         </div>
                         <div className="mt-24">
                             <h6 className="text-xl mb-16">Personal Info</h6>
@@ -52,7 +84,7 @@ const ViewProfileLayer = () => {
                                         Full Name
                                     </span>
                                     <span className="w-70 text-secondary-light fw-medium">
-                                        : Will Jonto
+                                        {userData?.fullName}
                                     </span>
                                 </li>
                                 <li className="d-flex align-items-center gap-1 mb-12">
@@ -61,53 +93,36 @@ const ViewProfileLayer = () => {
                                         Email
                                     </span>
                                     <span className="w-70 text-secondary-light fw-medium">
-                                        : willjontoax@gmail.com
+                                        {userData?.email}
                                     </span>
                                 </li>
+                               
                                 <li className="d-flex align-items-center gap-1 mb-12">
                                     <span className="w-30 text-md fw-semibold text-primary-light">
                                         {" "}
-                                        Phone Number
+                                        Role
                                     </span>
                                     <span className="w-70 text-secondary-light fw-medium">
-                                        : (1) 2536 2561 2365
+                                        {userData?.roles?.[0]}
                                     </span>
                                 </li>
+                               
                                 <li className="d-flex align-items-center gap-1 mb-12">
-                                    <span className="w-30 text-md fw-semibold text-primary-light">
-                                        {" "}
-                                        Department
-                                    </span>
-                                    <span className="w-70 text-secondary-light fw-medium">
-                                        : Design
-                                    </span>
-                                </li>
-                                <li className="d-flex align-items-center gap-1 mb-12">
-                                    <span className="w-30 text-md fw-semibold text-primary-light">
-                                        {" "}
-                                        Designation
-                                    </span>
-                                    <span className="w-70 text-secondary-light fw-medium">
-                                        : UI UX Designer
-                                    </span>
-                                </li>
-                                <li className="d-flex align-items-center gap-1 mb-12">
-                                    <span className="w-30 text-md fw-semibold text-primary-light">
-                                        {" "}
-                                        Languages
-                                    </span>
-                                    <span className="w-70 text-secondary-light fw-medium">
-                                        : English
-                                    </span>
-                                </li>
-                                <li className="d-flex align-items-center gap-1">
                                     <span className="w-30 text-md fw-semibold text-primary-light">
                                         {" "}
                                         Bio
                                     </span>
                                     <span className="w-70 text-secondary-light fw-medium">
-                                        : Lorem Ipsum&nbsp;is simply dummy text of the printing and
-                                        typesetting industry.
+                                         {userData?.bio}
+                                    </span>
+                                </li>
+                                <li className="d-flex align-items-center gap-1">
+                                    <span className="w-30 text-md fw-semibold text-primary-light">
+                                        {" "}
+                                        Interests
+                                    </span>
+                                    <span className="w-70 text-secondary-light fw-medium">
+                                        {userData?.interests?.map(x => x.name).join(', ')}
                                     </span>
                                 </li>
                             </ul>
@@ -152,7 +167,7 @@ const ViewProfileLayer = () => {
                                     Change Password
                                 </button>
                             </li>
-                            <li className="nav-item" role="presentation">
+                            {/* <li className="nav-item" role="presentation">
                                 <button
                                     className="nav-link d-flex align-items-center px-24"
                                     id="pills-notification-tab"
@@ -166,7 +181,7 @@ const ViewProfileLayer = () => {
                                 >
                                     Notification Settings
                                 </button>
-                            </li>
+                            </li> */}
                         </ul>
                         <div className="tab-content" id="pills-tabContent">
                             <div
@@ -224,6 +239,8 @@ const ViewProfileLayer = () => {
                                                     className="form-control radius-8"
                                                     id="name"
                                                     placeholder="Enter Full Name"
+                                                    value={fullName}
+                                                    onChange={(e) => setFullName(e.target.value)}
                                                 />
                                             </div>
                                         </div>
@@ -237,48 +254,36 @@ const ViewProfileLayer = () => {
                                                 </label>
                                                 <input
                                                     type="email"
-                                                    className="form-control radius-8"
+                                                    className="form-control radius-8 disabled"
                                                     id="email"
                                                     placeholder="Enter email address"
+                                                    defaultValue={email}
+                                                    disabled={false}
                                                 />
                                             </div>
                                         </div>
-                                        <div className="col-sm-6">
-                                            <div className="mb-20">
-                                                <label
-                                                    htmlFor="number"
-                                                    className="form-label fw-semibold text-primary-light text-sm mb-8"
-                                                >
-                                                    Phone
-                                                </label>
-                                                <input
-                                                    type="email"
-                                                    className="form-control radius-8"
-                                                    id="number"
-                                                    placeholder="Enter phone number"
-                                                />
-                                            </div>
-                                        </div>
+                                        
                                         <div className="col-sm-6">
                                             <div className="mb-20">
                                                 <label
                                                     htmlFor="depart"
                                                     className="form-label fw-semibold text-primary-light text-sm mb-8"
                                                 >
-                                                    Department
+                                                    Role
                                                     <span className="text-danger-600">*</span>{" "}
                                                 </label>
                                                 <select
                                                     className="form-control radius-8 form-select"
                                                     id="depart"
-                                                    defaultValue="Select Event Title"
+                                                    value={role}
+                                                    onChange={(e) => setRole(e.target.value)}
                                                 >
-                                                    <option value="Select Event Title" disabled>
-                                                        Select Event Title
+                                                    <option value="Select User Role" disabled>
+                                                        Select User Role
                                                     </option>
-                                                    <option value="Enter Event Title">Enter Event Title</option>
-                                                    <option value="Enter Event Title One">Enter Event Title One</option>
-                                                    <option value="Enter Event Title Two">Enter Event Title Two</option>
+                                                    {
+                                                        roleData.map((role, index) => (<option value={role.roleName} key={index}>{role.roleName}</option>))
+                                                    }
                                                 </select>
                                             </div>
                                         </div>
@@ -288,45 +293,20 @@ const ViewProfileLayer = () => {
                                                     htmlFor="desig"
                                                     className="form-label fw-semibold text-primary-light text-sm mb-8"
                                                 >
-                                                    Designation
+                                                    Interests
                                                     <span className="text-danger-600">*</span>{" "}
                                                 </label>
-                                                <select
-                                                    className="form-control radius-8 form-select"
-                                                    id="desig"
-                                                    defaultValue="Select Designation Title"
-                                                >
-                                                    <option value="Select Designation Title" disabled>
-                                                        Select Designation Title
-                                                    </option>
-                                                    <option value="Enter Designation Title">Enter Designation Title</option>
-                                                    <option value="Enter Designation Title One">Enter Designation Title One</option>
-                                                    <option value="Enter Designation Title Two">Enter Designation Title Two</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div className="col-sm-6">
-                                            <div className="mb-20">
-                                                <label
-                                                    htmlFor="Language"
-                                                    className="form-label fw-semibold text-primary-light text-sm mb-8"
-                                                >
-                                                    Language
-                                                    <span className="text-danger-600">*</span>{" "}
-                                                </label>
-                                                <select
-                                                    className="form-control radius-8 form-select"
-                                                    id="Language"
-                                                    defaultValue="Select Language"
-                                                >
-                                                    <option value="Select Language" disabled>
-                                                        Select Language
-                                                    </option>
-                                                    <option value="English">English</option>
-                                                    <option value="Bangla">Bangla</option>
-                                                    <option value="Hindi">Hindi</option>
-                                                    <option value="Arabic">Arabic</option>
-                                                </select>
+                                                <MultipleSelect
+                                                    label=""
+                                                    values={interests?.map(x => x.id)}
+                                                    options={interestData?.map(x => {return {label: x.name, value: x.id}})}
+                                                    onChange={handleInterestChange}
+                                                    SelectProps={{
+                                                        isCreatable: true,
+                                                        msgNoOptionsAvailable: 'All categories are selected',
+                                                        msgNoOptionsMatchFilter: 'No category name matches the filter',
+                                                    }}
+                                                />
                                             </div>
                                         </div>
                                         <div className="col-sm-12">
@@ -335,14 +315,15 @@ const ViewProfileLayer = () => {
                                                     htmlFor="desc"
                                                     className="form-label fw-semibold text-primary-light text-sm mb-8"
                                                 >
-                                                    Description
+                                                    Bio
                                                 </label>
                                                 <textarea
                                                     name="#0"
                                                     className="form-control radius-8"
                                                     id="desc"
-                                                    placeholder="Write description..."
-                                                    defaultValue={""}
+                                                    placeholder="Write bio..."
+                                                    value={bio}
+                                                    onChange={(e) => setBio(e.target.value)}
                                                 />
                                             </div>
                                         </div>
@@ -400,7 +381,7 @@ const ViewProfileLayer = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div
+                            {/* <div
                                 className="tab-pane fade"
                                 id="pills-notification"
                                 role="tabpanel"
@@ -495,7 +476,7 @@ const ViewProfileLayer = () => {
                                         />
                                     </div>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </div>

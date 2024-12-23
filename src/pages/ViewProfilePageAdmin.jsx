@@ -4,7 +4,7 @@ import Breadcrumb from "../components/Breadcrumb";
 import ViewProfileLayer from "../components/ViewProfileLayer";
 
 
-const ViewProfilePage = () => {
+const ViewProfilePageAdmin = () => {
   
   return (
     <>
@@ -24,4 +24,4 @@ const ViewProfilePage = () => {
   );
 };
 
-export default ViewProfilePage; 
+export default ViewProfilePageAdmin; 

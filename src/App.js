@@ -84,6 +84,7 @@ import TextGeneratorNewPage from "./pages/TextGeneratorNewPage";
 import { Provider } from "react-redux";
 import store from "./redux/store/store";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ViewProfilePageAdmin from "./pages/ViewProfilePageAdmin";
 
 function App() {
   return (
@@ -223,6 +224,7 @@ function App() {
           />
           <Route exact path="/videos" element={<VideosPage />} />
           <Route exact path="/view-profile" element={<ViewProfilePage />} />
+          <Route exact path="/view-profile-admin" element={<ViewProfilePageAdmin />} />
           <Route
             exact
             path="/voice-generator"

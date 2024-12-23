@@ -218,7 +218,7 @@ const MasterLayout = ({ children }) => {
               </ul> */}
             </li>
 
-            <li className="sidebar-menu-group-title">Application</li>
+            {/* <li className="sidebar-menu-group-title">Application</li>
             <li>
               <NavLink
                 to="/email"
@@ -257,10 +257,10 @@ const MasterLayout = ({ children }) => {
                 />
                 <span>Kanban</span>
               </NavLink>
-            </li>
+            </li> */}
 
             {/* Invoice Dropdown */}
-            <li className="dropdown">
+            {/* <li className="dropdown">
               <Link to="#">
                 <Icon icon="hugeicons:invoice-03" className="menu-icon" />
                 <span>Invoice</span>
@@ -311,10 +311,10 @@ const MasterLayout = ({ children }) => {
                   </NavLink>
                 </li>
               </ul>
-            </li>
+            </li> */}
 
             {/* Ai Application Dropdown */}
-            <li className="dropdown">
+            {/* <li className="dropdown">
               <Link to="#">
                 <i className="ri-robot-2-line mr-10" />
 
@@ -377,9 +377,9 @@ const MasterLayout = ({ children }) => {
                   </NavLink>
                 </li>
               </ul>
-            </li>
+            </li> */}
 
-            {/* Crypto Currency Dropdown */}
+            {/* Crypto Currency Dropdown
             <li className="dropdown">
               <Link to="#">
                 <i className="ri-robot-2-line mr-10" />
@@ -436,7 +436,7 @@ const MasterLayout = ({ children }) => {
             <li className="sidebar-menu-group-title">UI Elements</li>
 
             {/* Components Dropdown */}
-            <li className="dropdown">
+            {/* <li className="dropdown">
               <Link to="#">
                 <Icon
                   icon="solar:document-text-outline"
@@ -677,10 +677,10 @@ const MasterLayout = ({ children }) => {
                   </NavLink>
                 </li>
               </ul>
-            </li>
+            </li> */}
 
             {/* Forms Dropdown */}
-            <li className="dropdown">
+            {/* <li className="dropdown">
               <Link to="#">
                 <Icon icon="heroicons:document" className="menu-icon" />
                 <span>Forms</span>
@@ -731,10 +731,10 @@ const MasterLayout = ({ children }) => {
                   </NavLink>
                 </li>
               </ul>
-            </li>
+            </li> */}
 
             {/* Table Dropdown */}
-            <li className="dropdown">
+            {/* <li className="dropdown">
               <Link to="#">
                 <Icon icon="mingcute:storage-line" className="menu-icon" />
                 <span>Table</span>
@@ -763,10 +763,10 @@ const MasterLayout = ({ children }) => {
                   </NavLink>
                 </li>
               </ul>
-            </li>
+            </li> */}
 
             {/* Chart Dropdown */}
-            <li className="dropdown">
+            {/* <li className="dropdown">
               <Link to="#">
                 <Icon icon="solar:pie-chart-outline" className="menu-icon" />
                 <span>Chart</span>
@@ -816,7 +816,7 @@ const MasterLayout = ({ children }) => {
                 <Icon icon="fe:vector" className="menu-icon" />
                 <span>Widgets</span>
               </NavLink>
-            </li>
+            </li> */}
 
             {/* Users Dropdown */}
             <li className="dropdown">
@@ -907,10 +907,10 @@ const MasterLayout = ({ children }) => {
               </ul>
             </li>
 
-            <li className="sidebar-menu-group-title">Application</li>
+            {/* <li className="sidebar-menu-group-title">Application</li> */}
 
             {/* Authentication Dropdown */}
-            <li className="dropdown">
+            {/* <li className="dropdown">
               <Link to="#">
                 <Icon icon="simple-line-icons:vector" className="menu-icon" />
                 <span>Authentication</span>
@@ -1002,7 +1002,7 @@ const MasterLayout = ({ children }) => {
                 <Icon icon="octicon:info-24" className="menu-icon" />
                 <span>Terms &amp; Conditions</span>
               </NavLink>
-            </li>
+            </li> */}
 
             {/* Settings Dropdown */}
             <li className="dropdown">
@@ -1047,7 +1047,7 @@ const MasterLayout = ({ children }) => {
                     Notification Alert
                   </NavLink>
                 </li>
-                <li>
+                {/* <li>
                   <NavLink
                     to="/theme"
                     className={(navData) =>
@@ -1057,8 +1057,8 @@ const MasterLayout = ({ children }) => {
                     <i className="ri-circle-fill circle-icon text-danger-main w-auto" />{" "}
                     Theme
                   </NavLink>
-                </li>
-                <li>
+                </li> */}
+                {/* <li>
                   <NavLink
                     to="/currencies"
                     className={(navData) =>
@@ -1068,8 +1068,8 @@ const MasterLayout = ({ children }) => {
                     <i className="ri-circle-fill circle-icon text-danger-main w-auto" />{" "}
                     Currencies
                   </NavLink>
-                </li>
-                <li>
+                </li> */}
+                {/* <li>
                   <NavLink
                     to="/language"
                     className={(navData) =>
@@ -1079,8 +1079,8 @@ const MasterLayout = ({ children }) => {
                     <i className="ri-circle-fill circle-icon text-danger-main w-auto" />{" "}
                     Languages
                   </NavLink>
-                </li>
-                <li>
+                </li> */}
+                {/* <li>
                   <NavLink
                     to="/payment-gateway"
                     className={(navData) =>
@@ -1090,7 +1090,7 @@ const MasterLayout = ({ children }) => {
                     <i className="ri-circle-fill circle-icon text-danger-main w-auto" />{" "}
                     Payment Gateway
                   </NavLink>
-                </li>
+                </li> */}
               </ul>
             </li>
           </ul>
@@ -1323,7 +1323,7 @@ const MasterLayout = ({ children }) => {
                       <li>
                         <Link
                           className="dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-primary d-flex align-items-center gap-3"
-                          to="/view-profile"
+                          to="/view-profile-admin"
                         >
                           <Icon
                             icon="solar:user-linear"

@@ -5,6 +5,10 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import apiRequest from "../helper/axios";
 import ErrorAlert from "./ErrorAlert";
 import { login } from "../redux/actions/authSlice";
+import { UserRole } from "../helper/common/Enum";
+import { ErrorMessage } from "../helper/common/Message";
+import { ThreeDots } from "react-loader-spinner";
+import { Endpoints } from "../helper/common/Endpoint";
 
 const SignInLayer = () => {
   const [email, setEmail] = useState("");
@@ -39,23 +43,35 @@ const SignInLayer = () => {
 
   const handleSignIn = async (e) => {
     e.preventDefault();
+    setLoading(true)
     setErrorMessage('');
-    if (!validate()) return;
-
+    if (!validate()) {
+      setLoading(false);
+      return;
+    }
     const requestData = {
       email: email,
       password: password,
     };
     try {
       const response = await apiRequest.post(
-        "/Authentication/Login",
+        Endpoints.SIGN_IN,
         requestData
       );
-      dispatch(login(response?.data?.data));
-      return navigate('/dashboard');
+      setLoading(false);
+      const userAuthorized = response?.data?.data?.userData?.roles?.filter(x => x === UserRole.ADMIN || x === UserRole.MODERATOR)?.length;
+      if(userAuthorized){
+          dispatch(login(response?.data?.data));
+          return navigate('/dashboard');
+      }else{
+        setErrorMessage(ErrorMessage.NOT_AUTHORIZED);
+        setPassword("");
+      }
 
     } catch (err) {
+        setLoading(false);
         setErrorMessage(err?.response?.data?.Message);
+        setPassword("");
     }
   };
 
@@ -149,14 +165,25 @@ const SignInLayer = () => {
             
             <button
               type="submit"
-              className="btn btn-primary text-sm btn-sm px-12 py-16 w-100 radius-12 mt-32"
+              className={`d-flex justify-content-center btn btn-primary text-sm btn-sm px-12 py-16 w-100 radius-12 mt-32 ${loading ? "disabled" : ""}`}
               onClick={handleSignIn}
               disabled={loading}
             >
               {" "}
-              
-              Sign In
+              <ThreeDots
+                height="22"
+                width="22"
+                radius="5"
+                color="#fff"
+                ariaLabel="loading"
+                wrapperStyle={{marginRight: 5}}
+                wrapperClass=""
+                visible={loading}
+              />
+              <span className="">Sign In</span>
+
             </button>
+            
             {/* <div className="mt-32 center-border-horizontal text-center">
                             <span className="bg-base z-1 px-4">Or sign in with</span>
                         </div>
