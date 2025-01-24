@@ -1,8 +1,9 @@
 import axios from "axios";
 
 const apiRequest = axios.create({
-  baseURL: "https://jeeneapi.rhenoxinnovations.com/api",
-  timeout: 10000,
+  // baseURL: "https://jeeneapi.rhenoxinnovations.com/api",
+  baseURL: "https://localhost:44348/api",
+  timeout: 1000000,
   headers: {
     "Content-Type": "application/json",
   },
