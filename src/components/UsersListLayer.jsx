@@ -3,9 +3,9 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import apiRequest from "../helper/axios";
 import { Endpoints } from "../helper/common/Endpoint";
-import { event } from "jquery";
 import { ThreeDots } from "react-loader-spinner";
 import Paginator from "./child/Paginator";
+import { Button, Modal } from "react-bootstrap";
 
 const UsersListLayer = () => {
   const [userList, setUserList] = useState([]);
@@ -13,6 +13,8 @@ const UsersListLayer = () => {
   const [loading, setLoading] = useState(false);
   const [pageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null)
 
   useEffect(() => {
     getUserData();
@@ -61,7 +63,45 @@ const UsersListLayer = () => {
     return userList?.slice(startIndex, endIndex);
   };
 
+  const openDeletePopup = (userId) => {
+    setSelectedUserId(userId)
+    setShowPopup(true)
+  }
+
+  const handleClose = () => {
+    setSelectedUserId(null)
+    setShowPopup(false)
+  }
+
+  const handleConfirm = async () => {
+    const result = await apiRequest.delete(Endpoints.DELETE_USER + "/" + selectedUserId);
+    if(result && result.data && result.data.data?.success){
+        getUserData()
+    }
+    setShowPopup(false)
+  }
+
   return (
+    <>
+    <Modal
+        show={showPopup}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to delete this user?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleConfirm}>Confirm</Button>
+        </Modal.Footer>
+      </Modal>
     <div className="card h-100 p-0 radius-12">
       <div className="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
         <div className="d-flex align-items-center flex-wrap gap-3">
@@ -137,7 +177,7 @@ const UsersListLayer = () => {
                 </thead>
                 <tbody>
                   {getCurrentPageData()?.map((data, index) =>
-                    <UserRow data={data} index={index} />
+                    <UserRow data={data} index={index} openDeletePopup={openDeletePopup}/>
                   )}
                 </tbody>
               </table>
@@ -153,10 +193,11 @@ const UsersListLayer = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
-const UserRow = ({data, index}) => {
+const UserRow = ({data, index, openDeletePopup}) => {
     
  const navigate = useNavigate();
  
@@ -173,9 +214,6 @@ const UserRow = ({data, index}) => {
     navigate("/view-profile", {state :  {userId: data?.id}})
   }
 
-  const deleteUserClicked = () => {
-
-  }
 
   return (
     <tr key={index}>
@@ -232,7 +270,7 @@ const UserRow = ({data, index}) => {
           <button
             type="button"
             className="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
-            onClick={deleteUserClicked}
+            onClick={() => openDeletePopup(data?.id)}
           >
             <Icon icon="fluent:delete-24-regular" className="menu-icon" />
           </button>
