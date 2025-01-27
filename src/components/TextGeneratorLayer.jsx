@@ -146,7 +146,7 @@ const TextGeneratorLayer = () => {
             </div>
             <div className="col-xxl-9 col-lg-8">
                 <div className="chat-main card overflow-hidden">
-                    <div className="chat-sidebar-single gap-8 justify-content-between cursor-default flex-nowrap">
+                    <div className="chat--single gap-8 justify-content-between cursor-default flex-nowrap">
                         <div className="d-flex align-items-center gap-16">
                             <Link
                                 to="/text-generator-new"
@@ -173,7 +173,7 @@ const TextGeneratorLayer = () => {
                             </button>
                         </div>
                     </div>
-                    {/* chat-sidebar-single end */}
+                    {/* chat--single end */}
                     <div className="chat-message-list max-h-612-px min-h-612-px">
                         {/* User generated Text Start */}
                         <div className="d-flex align-items-start justify-content-between gap-16 border-bottom border-neutral-200 pb-16 mb-16">

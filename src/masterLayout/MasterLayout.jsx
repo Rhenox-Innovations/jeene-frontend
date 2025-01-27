@@ -839,7 +839,7 @@ const MasterLayout = ({ children }) => {
                     Users List
                   </NavLink>
                 </li>
-                <li>
+                {/* <li>
                   <NavLink
                     to="/users-grid"
                     className={(navData) =>
@@ -849,7 +849,7 @@ const MasterLayout = ({ children }) => {
                     <i className="ri-circle-fill circle-icon text-warning-main w-auto" />{" "}
                     Users Grid
                   </NavLink>
-                </li>
+                </li> */}
                 <li>
                   <NavLink
                     to="/add-user"
