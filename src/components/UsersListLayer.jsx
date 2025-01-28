@@ -15,6 +15,8 @@ const UsersListLayer = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showPopup, setShowPopup] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null)
+  const [showStatusPopup, setShowStatusPopup] = useState();
+  const [popupLoading, setPopupLoading] = useState(false)
 
   useEffect(() => {
     getUserData();
@@ -74,11 +76,44 @@ const UsersListLayer = () => {
   }
 
   const handleConfirm = async () => {
+    setPopupLoading(true)
     const result = await apiRequest.delete(Endpoints.DELETE_USER + "/" + selectedUserId);
-    if(result && result.data && result.data.data?.success){
-        getUserData()
+    setPopupLoading(false)
+    if(result?.data?.success){
+      deleteFromUserData(selectedUserId)
     }
     setShowPopup(false)
+  }
+
+  const openStatusPopup = (userId, status) => {
+    setSelectedUserId(userId)
+    setShowStatusPopup(status)
+  }
+
+  
+  const handleStatusPopupClose = () => {
+    setSelectedUserId(null)
+    setShowStatusPopup()
+  }
+
+  const handleStatusPopupConfirm = async (status) => {
+    setPopupLoading(true)
+    const data = {
+      userId: selectedUserId
+    }
+    const result = status === "Activate" ? await apiRequest.post(Endpoints.ACTIVATE_USER, data) : await apiRequest.post(Endpoints.DEACTIVATE_USER, data);
+    setPopupLoading(false)
+    if(result?.data?.success){
+        getUserData()
+    }
+    setShowStatusPopup()
+  }
+
+  const deleteFromUserData = (userId) => {
+    const filteredOld = userListOld.filter((i) => i?.id !== userId);
+    setUserListOld(filteredOld)
+    const filtered = userList.filter((i) => i?.id !== userId);
+    setUserList(filtered)
   }
 
   return (
@@ -99,7 +134,48 @@ const UsersListLayer = () => {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleConfirm}>Confirm</Button>
+          <Button variant="primary" onClick={handleConfirm} disabled={popupLoading} className="d-flex align-items-center"> 
+            <ThreeDots
+                height="20"
+                width="20"
+                radius="5"
+                color="#fff"
+                ariaLabel="loading"
+                wrapperStyle={{ marginRight: 5 }}
+                wrapperClass=""
+                visible={popupLoading}
+              />Confirm</Button>
+        </Modal.Footer>
+      </Modal>
+    
+      <Modal
+        show={showStatusPopup}
+        onHide={handleStatusPopupClose}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to <span className="tw-semibold">{showStatusPopup}</span> this user?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleStatusPopupClose}>
+            Close
+          </Button>
+          <Button variant="primary" disabled={popupLoading} className="d-flex align-items-center"
+          onClick={() => handleStatusPopupConfirm(showStatusPopup)}>
+            <ThreeDots
+                height="20"
+                width="20"
+                radius="5"
+                color="#fff"
+                ariaLabel="loading"
+                wrapperStyle={{ marginRight: 5 }}
+                wrapperClass=""
+                visible={popupLoading}/>
+            Confirm</Button>
         </Modal.Footer>
       </Modal>
     <div className="card h-100 p-0 radius-12">
@@ -158,7 +234,7 @@ const UsersListLayer = () => {
             <>
               <table className="table bordered-table sm-table mb-0">
                 <thead>
-                  <tr>
+                  <tr key={-1}>
                     <th scope="col">
                       <div className="d-flex align-items-center gap-10">
                         S.no
@@ -177,7 +253,7 @@ const UsersListLayer = () => {
                 </thead>
                 <tbody>
                   {getCurrentPageData()?.map((data, index) =>
-                    <UserRow data={data} index={index} openDeletePopup={openDeletePopup}/>
+                    <UserRow key={index} data={data} index={index} openDeletePopup={openDeletePopup} openStatusPopup={openStatusPopup}/>
                   )}
                 </tbody>
               </table>
@@ -197,7 +273,7 @@ const UsersListLayer = () => {
   );
 };
 
-const UserRow = ({data, index, openDeletePopup}) => {
+const UserRow = ({data, index, openDeletePopup, openStatusPopup}) => {
     
  const navigate = useNavigate();
  
@@ -213,7 +289,6 @@ const UserRow = ({data, index, openDeletePopup}) => {
   const editUserClicked = () => {
     navigate("/view-profile", {state :  {userId: data?.id}})
   }
-
 
   return (
     <tr key={index}>
@@ -242,13 +317,15 @@ const UserRow = ({data, index, openDeletePopup}) => {
       <td>{data?.roles?.[0]}</td>
       <td className="text-center">
         {data?.isActive ? (
-          <span className="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">
+          <button className="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm"
+          onClick={() => openStatusPopup(data?.id, "Block")}>
             Active
-          </span>
+          </button>
         ) : (
-          <span className="bg-danger-focus text-danger-600 border border-danger-main px-24 py-4 radius-4 fw-medium text-sm">
+          <button className="bg-danger-focus text-danger-600 border border-danger-main px-24 py-4 radius-4 fw-medium text-sm"
+          onClick={() => openStatusPopup(data?.id, "Activate")}>
             Blocked
-          </span>
+          </button>
         )}
       </td>
       <td className="text-center">

@@ -15,12 +15,14 @@ const Endpoints = {
   DELETE_USER: "/User/Delete",
   CREATE_USER: "/User/Create",
   CHANGE_PASSWORD: "/User/ChangePassword",
-  
+  ACTIVATE_USER: "/User/ActivateUser",
+  DEACTIVATE_USER: "/User/DeactivateUser",
+
   //Roles
   GET_ROLES: "/Role/GetAll",
 
   //File Upload
-  UPLOAD_FILE: "/File/Upload"
+  UPLOAD_FILE: "/File/Upload",
 };
 
 export { Endpoints };
