@@ -84,7 +84,7 @@ const MasterLayout = ({ children }) => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/');
+    navigate('/sign-in');
   }
 
   return (
