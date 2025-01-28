@@ -882,7 +882,7 @@ const MasterLayout = ({ children }) => {
                 <span>Role &amp; Access</span>
               </Link>
               <ul className="sidebar-submenu">
-                <li>
+                {/* <li>
                   <NavLink
                     to="/role-access"
                     className={(navData) =>
@@ -892,7 +892,7 @@ const MasterLayout = ({ children }) => {
                     <i className="ri-circle-fill circle-icon text-primary-600 w-auto" />{" "}
                     Role &amp; Access
                   </NavLink>
-                </li>
+                </li> */}
                 <li>
                   <NavLink
                     to="/assign-role"

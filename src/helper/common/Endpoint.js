@@ -14,6 +14,8 @@ const Endpoints = {
   GET_ALL_USERS: "/User/GetAll",
   DELETE_USER: "/User/Delete",
   CREATE_USER: "/User/Create",
+  CHANGE_PASSWORD: "/User/ChangePassword",
+  
   //Roles
   GET_ROLES: "/Role/GetAll",
 

@@ -15,6 +15,8 @@ const ViewProfileLayer = ({ page }) => {
   const [imagePreview, setImagePreview] = useState(userData?.profilePicture);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+  const [oldPasswprdVisible, setOldPasswordVisible] = useState(false);
+
   const [fullName, setFullName] = useState(userData?.fullName);
   const [email, setEmail] = useState(userData?.email);
   const [role, setRole] = useState(userData?.roles?.[0]);
@@ -25,7 +27,12 @@ const ViewProfileLayer = ({ page }) => {
   const [loading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);
   const [userId, setUserId] = useState(userData?.id);
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [showSuccess, setShowSuccess] = useState();
+  const [showError, setShowError] = useState();
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState("")
+  const [errors, setErrors] = useState({})
 
   const dispatch = useDispatch();
 
@@ -43,6 +50,11 @@ const ViewProfileLayer = ({ page }) => {
   // Toggle function for confirm password field
   const toggleConfirmPasswordVisibility = () => {
     setConfirmPasswordVisible(!confirmPasswordVisible);
+  };
+
+
+  const toggleOldPasswordVisibility = () => {
+    setOldPasswordVisible(!oldPasswprdVisible);
   };
 
   const checkUserProfile = async () => {
@@ -133,7 +145,7 @@ const ViewProfileLayer = ({ page }) => {
             dispatch(updateUserData(result?.data?.data));
           }
         }
-        showSuccessMessage()
+        showSuccessMessage("User profile saved successfully!")
       }
     } catch (err) {
       setLoading(false);
@@ -150,9 +162,57 @@ const ViewProfileLayer = ({ page }) => {
     setRole(userData?.roles?.[0]);
   };
 
-  const showSuccessMessage = () => {
-    setShowSuccess(true)
-    setTimeout(() => setShowSuccess(false), 3000)
+  const showSuccessMessage = (message) => {
+    setShowSuccess(message)
+    setTimeout(() => setShowSuccess(), 3000)
+  }
+
+  const validate = () => {
+    setErrors({})
+    var errorList = {}
+    let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]{8,25}$/
+    
+    if(!passwordRegex.test(password)){
+        errorList = {...errorList, password: "Password must be 8 charachters long with at least single uppercase and lowercase alphabet, single number and single special character"}
+    }
+
+    if(password !== confirmPassword){
+        errorList = {...errorList, confirmPassword: "Password and Confirm Password doesn't match!"}
+    }
+
+    if(!state?.userId && !oldPassword && oldPassword == ""){
+        errorList = {...errorList, oldPassword: "Old Password is required!"}
+    }
+
+    setErrors(errorList)
+    return Object.keys(errorList).length <= 0
+  }
+
+  const submitChangePassword = async () => {
+    
+    if(validate()){
+        setLoading(true)
+        let data = {
+            newPassword: password,
+            confirmPassword: confirmPassword,
+            userId: userId
+        }
+
+        if(!state?.userId){
+            data = {...data, currentPassword: oldPassword}
+        }
+
+        const result = await apiRequest.post(Endpoints.CHANGE_PASSWORD, data)
+        setLoading(false)
+        if(result?.status == 200 && result?.data?.success){
+            showSuccessMessage("User password changed successfully!")
+            setOldPassword("")
+            setPassword("")
+            setConfirmPassword("")
+        }else{
+            setShowError("Incorrect old password")
+        }
+    }
   }
   return (
     <div className="row gy-4">
@@ -253,11 +313,22 @@ const ViewProfileLayer = ({ page }) => {
           <div className="card h-100">
             <div className="card-body p-24">
             {showSuccess && <div
-                className="alert alert-primary bg-primary-50 text-primary-600 border-primary-50 px-24 py-11 mb-0 fw-semibold text-lg radius-8 d-flex align-items-center justify-content-between mb-10"
+                className="alert alert-primary bg-primary-50 text-primary-600 border-primary-50 px-24 py-11 mb-0 text-lg radius-8 d-flex align-items-center justify-content-between mb-10"
                 role="alert"
             >
-                User Profile saved successfully!
-                <button className="remove-button text-primary-600 text-xxl line-height-1" onClick={() => setShowSuccess(false)}>
+                {showSuccess}
+                <button className="remove-button text-primary-600 text-xxl line-height-1" onClick={() => setShowSuccess()}>
+                {" "}
+                <Icon icon="iconamoon:sign-times-light" className="icon" />
+                </button>
+            </div> }
+
+            {showError && <div
+                className="alert alert-danger bg-primary-50 text-danger-600 border-danger-50 px-24 py-11 mb-0 text-lg radius-8 d-flex align-items-center justify-content-between mb-10"
+                role="alert"
+            >
+                {showError}
+                <button className="remove-button text-danger-600 text-xxl line-height-1" onClick={() => setShowError()}>
                 {" "}
                 <Icon icon="iconamoon:sign-times-light" className="icon" />
                 </button>
@@ -485,6 +556,7 @@ const ViewProfileLayer = ({ page }) => {
                         type="button"
                         className="d-flex justify-content-center btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8"
                         onClick={handleSubmit}
+                        disabled={loading}
                       >
                         <ThreeDots
                           height="22"
@@ -508,6 +580,33 @@ const ViewProfileLayer = ({ page }) => {
                   aria-labelledby="pills-change-passwork-tab"
                   tabIndex="0"
                 >
+
+                {!state?.userId && <div className="mb-20">
+                    <label
+                      htmlFor="your-password"
+                      className="form-label fw-semibold text-primary-light text-sm mb-8"
+                    >
+                      Old Password <span className="text-danger-600">*</span>
+                    </label>
+                    <div className="position-relative">
+                      <input
+                        type={oldPasswprdVisible ? "text" : "password"}
+                        className="form-control radius-8"
+                        id="old-password"
+                        placeholder="Enter Old Password*"
+                        value={oldPassword}
+                        onChange={(e) => setOldPassword(e.target.value)}
+                      />
+                      <span
+                        className={`toggle-password ${
+                          oldPasswprdVisible ? "ri-eye-off-line" : "ri-eye-line"
+                        } cursor-pointer position-absolute end-0 top-50 translate-middle-y me-16 text-secondary-light`}
+                        onClick={toggleOldPasswordVisibility}
+                      ></span>
+                    </div>
+                    {errors?.oldPassword && <span className="text-danger-500 text-sm">{errors?.oldPassword}</span>}
+                  </div>
+                }
                   <div className="mb-20">
                     <label
                       htmlFor="your-password"
@@ -521,6 +620,8 @@ const ViewProfileLayer = ({ page }) => {
                         className="form-control radius-8"
                         id="your-password"
                         placeholder="Enter New Password*"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                       />
                       <span
                         className={`toggle-password ${
@@ -529,6 +630,8 @@ const ViewProfileLayer = ({ page }) => {
                         onClick={togglePasswordVisibility}
                       ></span>
                     </div>
+                    {errors?.password && <span className="text-danger-500 text-sm">{errors?.password}</span>}
+                    
                   </div>
 
                   <div className="mb-20">
@@ -545,6 +648,8 @@ const ViewProfileLayer = ({ page }) => {
                         className="form-control radius-8"
                         id="confirm-password"
                         placeholder="Confirm Password*"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
                       />
                       <span
                         className={`toggle-password ${
@@ -555,104 +660,31 @@ const ViewProfileLayer = ({ page }) => {
                         onClick={toggleConfirmPasswordVisibility}
                       ></span>
                     </div>
+                    {errors?.confirmPassword && <span className="text-danger-500 text-sm">{errors?.confirmPassword}</span>}
+                    
                   </div>
+                  <div className="d-flex align-items-center justify-content-center gap-3">
+                      <button
+                        type="button"
+                        className="d-flex justify-content-center btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8"
+                        onClick={submitChangePassword}
+                        disabled={loading}
+                      >
+                        <ThreeDots
+                          height="22"
+                          width="22"
+                          radius="5"
+                          color="#fff"
+                          ariaLabel="loading"
+                          wrapperStyle={{ marginRight: 5 }}
+                          wrapperClass=""
+                          visible={loading}
+                        />
+                        Save
+                      </button>
+                    </div>
                 </div>
-                {/* <div
-                                className="tab-pane fade"
-                                id="pills-notification"
-                                role="tabpanel"
-                                aria-labelledby="pills-notification-tab"
-                                tabIndex={0}
-                            >
-                                <div className="form-switch switch-primary py-12 px-16 border radius-8 position-relative mb-16">
-                                    <label
-                                        htmlFor="companzNew"
-                                        className="position-absolute w-100 h-100 start-0 top-0"
-                                    />
-                                    <div className="d-flex align-items-center gap-3 justify-content-between">
-                                        <span className="form-check-label line-height-1 fw-medium text-secondary-light">
-                                            Company News
-                                        </span>
-                                        <input
-                                            className="form-check-input"
-                                            type="checkbox"
-                                            role="switch"
-                                            id="companzNew"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="form-switch switch-primary py-12 px-16 border radius-8 position-relative mb-16">
-                                    <label
-                                        htmlFor="pushNotifcation"
-                                        className="position-absolute w-100 h-100 start-0 top-0"
-                                    />
-                                    <div className="d-flex align-items-center gap-3 justify-content-between">
-                                        <span className="form-check-label line-height-1 fw-medium text-secondary-light">
-                                            Push Notification
-                                        </span>
-                                        <input
-                                            className="form-check-input"
-                                            type="checkbox"
-                                            role="switch"
-                                            id="pushNotifcation"
-                                            defaultChecked=""
-                                        />
-                                    </div>
-                                </div>
-                                <div className="form-switch switch-primary py-12 px-16 border radius-8 position-relative mb-16">
-                                    <label
-                                        htmlFor="weeklyLetters"
-                                        className="position-absolute w-100 h-100 start-0 top-0"
-                                    />
-                                    <div className="d-flex align-items-center gap-3 justify-content-between">
-                                        <span className="form-check-label line-height-1 fw-medium text-secondary-light">
-                                            Weekly News Letters
-                                        </span>
-                                        <input
-                                            className="form-check-input"
-                                            type="checkbox"
-                                            role="switch"
-                                            id="weeklyLetters"
-                                            defaultChecked=""
-                                        />
-                                    </div>
-                                </div>
-                                <div className="form-switch switch-primary py-12 px-16 border radius-8 position-relative mb-16">
-                                    <label
-                                        htmlFor="meetUp"
-                                        className="position-absolute w-100 h-100 start-0 top-0"
-                                    />
-                                    <div className="d-flex align-items-center gap-3 justify-content-between">
-                                        <span className="form-check-label line-height-1 fw-medium text-secondary-light">
-                                            Meetups Near you
-                                        </span>
-                                        <input
-                                            className="form-check-input"
-                                            type="checkbox"
-                                            role="switch"
-                                            id="meetUp"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="form-switch switch-primary py-12 px-16 border radius-8 position-relative mb-16">
-                                    <label
-                                        htmlFor="orderNotification"
-                                        className="position-absolute w-100 h-100 start-0 top-0"
-                                    />
-                                    <div className="d-flex align-items-center gap-3 justify-content-between">
-                                        <span className="form-check-label line-height-1 fw-medium text-secondary-light">
-                                            Orders Notifications
-                                        </span>
-                                        <input
-                                            className="form-check-input"
-                                            type="checkbox"
-                                            role="switch"
-                                            id="orderNotification"
-                                            defaultChecked=""
-                                        />
-                                    </div>
-                                </div>
-                            </div> */}
+                
               </div>
             </div>
           </div>
