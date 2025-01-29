@@ -11,7 +11,7 @@ const UsersListLayer = () => {
   const [userList, setUserList] = useState([]);
   const [userListOld, setUserListOld] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [pageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [showPopup, setShowPopup] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null)
@@ -181,9 +181,17 @@ const UsersListLayer = () => {
     <div className="card h-100 p-0 radius-12">
       <div className="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
         <div className="d-flex align-items-center flex-wrap gap-3">
-          <span className="text-md fw-medium text-secondary-light mb-0">
-            Show
-          </span>
+        <span className="text-md fw-medium text-secondary-light mb-0">Show</span>
+                    <select
+                        className="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px"
+                        value={pageSize}
+                        onChange={(e) => setPageSize(e.target.value)}
+                    >
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+
+                    </select>
           <form className="navbar-search">
             <input
               type="text"

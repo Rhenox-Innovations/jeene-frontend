@@ -9,6 +9,7 @@ import { logout } from "../redux/actions/authSlice";
 const MasterLayout = ({ children }) => {
   let [sidebarActive, seSidebarActive] = useState(false);
   let [mobileMenu, setMobileMenu] = useState(false);
+
   const location = useLocation(); // Hook to get the current route
   const user = useSelector(state => state?.auth?.user?.userData);
 
@@ -16,6 +17,7 @@ const MasterLayout = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
+
     // Function to handle dropdown clicks
     const handleDropdownClick = (event) => {
       event.preventDefault();
@@ -1014,7 +1016,7 @@ const MasterLayout = ({ children }) => {
                 <span>Settings</span>
               </Link>
               <ul className="sidebar-submenu">
-                <li>
+                {/* <li>
                   <NavLink
                     to="/company"
                     className={(navData) =>
@@ -1046,7 +1048,7 @@ const MasterLayout = ({ children }) => {
                     <i className="ri-circle-fill circle-icon text-info-main w-auto" />{" "}
                     Notification Alert
                   </NavLink>
-                </li>
+                </li> */}
                 {/* <li>
                   <NavLink
                     to="/theme"
@@ -1128,10 +1130,10 @@ const MasterLayout = ({ children }) => {
                 >
                   <Icon icon="heroicons:bars-3-solid" className="icon" />
                 </button>
-                <form className="navbar-search">
+                {/* <form className="navbar-search">
                   <input type="text" name="search" placeholder="Search" />
                   <Icon icon="ion:search-outline" className="icon" />
-                </form>
+                </form> */}
               </div>
             </div>
             <div className="col-auto">

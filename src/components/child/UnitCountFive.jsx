@@ -18,7 +18,7 @@ const UnitCountFive = () => {
                                         </span>
                                         <div>
                                             <span className="mb-0 fw-medium text-secondary-light text-lg">
-                                                Total Students
+                                                Total Users
                                             </span>
                                         </div>
                                     </div>
@@ -43,7 +43,7 @@ const UnitCountFive = () => {
                                         </span>
                                         <div>
                                             <span className="mb-0 fw-medium text-secondary-light text-lg">
-                                                Total Courses
+                                                Total Categories
                                             </span>
                                         </div>
                                     </div>
@@ -88,7 +88,7 @@ const UnitCountFive = () => {
                     <div className="col-xxl-8">
                         <div className="card-body p-0">
                             <div className="d-flex align-items-center flex-wrap gap-2 justify-content-between">
-                                <h6 className="mb-2 fw-bold text-lg">Average Enrollment Rate</h6>
+                                <h6 className="mb-2 fw-bold text-lg">Average Registration Rate</h6>
                                 <div className="">
                                     <select className="form-select form-select-sm w-auto bg-base border text-secondary-light" defaultValue="Yearly">
                                         <option value="Yearly">Yearly</option>
@@ -99,13 +99,7 @@ const UnitCountFive = () => {
                                 </div>
                             </div>
                             <ul className="d-flex flex-wrap align-items-center justify-content-center mt-3 gap-3">
-                                <li className="d-flex align-items-center gap-2">
-                                    <span className="w-12-px h-12-px rounded-circle bg-primary-600" />
-                                    <span className="text-secondary-light text-sm fw-semibold">
-                                        Paid Course:
-                                        <span className="text-primary-light fw-bold">350</span>
-                                    </span>
-                                </li>
+                                
                                 <li className="d-flex align-items-center gap-2">
                                     <span className="w-12-px h-12-px rounded-circle bg-success-main" />
                                     <span className="text-secondary-light text-sm fw-semibold">

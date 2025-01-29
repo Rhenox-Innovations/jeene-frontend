@@ -118,7 +118,8 @@ const ViewProfileLayer = ({ page }) => {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault()
     setLoading(true);
     const requestData = {
       id: userId,
@@ -214,6 +215,7 @@ const ViewProfileLayer = ({ page }) => {
         }
     }
   }
+  
   return (
     <div className="row gy-4">
       <div className="col-lg-4">
@@ -433,7 +435,7 @@ const ViewProfileLayer = ({ page }) => {
                     </div>
                   </div>
                   {/* Upload Image End */}
-                  <form action="#">
+                  <form onSubmit={handleSubmit}>
                     <div className="row">
                       <div className="col-sm-6">
                         <div className="mb-20">
@@ -451,6 +453,7 @@ const ViewProfileLayer = ({ page }) => {
                             placeholder="Enter Full Name"
                             value={fullName}
                             onChange={(e) => setFullName(e.target.value)}
+                            required="required"
                           />
                         </div>
                       </div>
@@ -468,7 +471,8 @@ const ViewProfileLayer = ({ page }) => {
                             id="email"
                             placeholder="Enter email address"
                             defaultValue={email}
-                            disabled={false}
+                            disabled={true}
+                            required="required"
                           />
                         </div>
                       </div>
@@ -487,6 +491,7 @@ const ViewProfileLayer = ({ page }) => {
                             id="depart"
                             value={role}
                             onChange={(e) => setRole(e.target.value)}
+                            required="required"
                           >
                             <option value="Select User Role" disabled>
                               Select User Role
@@ -506,7 +511,7 @@ const ViewProfileLayer = ({ page }) => {
                             className="form-label fw-semibold text-primary-light text-sm mb-8"
                           >
                             Interests
-                            <span className="text-danger-600">*</span>{" "}
+                            
                           </label>
                           <MultipleSelect
                             label=""
@@ -553,9 +558,8 @@ const ViewProfileLayer = ({ page }) => {
                         Cancel
                       </button>
                       <button
-                        type="button"
+                        type="submit"
                         className="d-flex justify-content-center btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8"
-                        onClick={handleSubmit}
                         disabled={loading}
                       >
                         <ThreeDots

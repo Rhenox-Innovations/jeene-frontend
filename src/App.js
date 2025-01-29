@@ -102,17 +102,19 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route exact path="/index-2" element={<HomePageTwo />} />
+          {/* <Route exact path="/index-2" element={<HomePageTwo />} />
           <Route exact path="/index-3" element={<HomePageThree />} />
           <Route exact path="/index-4" element={<HomePageFour />} />
           <Route exact path="/index-5" element={<HomePageFive />} />
           <Route exact path="/index-6" element={<HomePageOne />} />
-          <Route exact path="/index-7" element={<HomePageSeven />} />
+          <Route exact path="/index-7" element={<HomePageSeven />} /> */}
 
           {/* SL */}
-          <Route exact path="/add-user" element={<AddUserPage />} />
+          <Route exact path="/add-user" element={ <ProtectedRoute><AddUserPage /></ProtectedRoute>} />
           <Route exact path="/alert" element={<AlertPage />} />
-          <Route exact path="/assign-role" element={<AssignRolePage />} />
+          <Route exact path="/assign-role" element={
+            <ProtectedRoute><AssignRolePage /></ProtectedRoute>
+            } />
           <Route exact path="/avatar" element={<AvatarPage />} />
           <Route exact path="/badges" element={<BadgesPage />} />
           <Route exact path="/button" element={<ButtonPage />} />
@@ -190,7 +192,7 @@ function App() {
           <Route exact path="/pricing" element={<PricingPage />} />
           <Route exact path="/progress" element={<ProgressPage />} />
           <Route exact path="/radio" element={<RadioPage />} />
-          <Route exact path="/role-access" element={<RoleAccessPage />} />
+          <Route exact path="/role-access" element={<ProtectedRoute><RoleAccessPage /></ProtectedRoute>} />
           <Route exact path="/sign-in" element={<SignInPage />} />
           <Route exact path="/sign-up" element={<SignUpPage />} />
           <Route exact path="/star-rating" element={<StarRatingPage />} />
@@ -215,7 +217,7 @@ function App() {
           <Route exact path="/tooltip" element={<TooltipPage />} />
           <Route exact path="/typography" element={<TypographyPage />} />
           <Route exact path="/users-grid" element={<UsersGridPage />} />
-          <Route exact path="/users-list" element={<UsersListPage />} />
+          <Route exact path="/users-list" element={<ProtectedRoute><UsersListPage /></ProtectedRoute>} />
           <Route exact path="/view-details" element={<ViewDetailsPage />} />
           <Route
             exact
@@ -223,8 +225,8 @@ function App() {
             element={<VideoGeneratorPage />}
           />
           <Route exact path="/videos" element={<VideosPage />} />
-          <Route exact path="/view-profile" element={<ViewProfilePage />} />
-          <Route exact path="/view-profile-admin" element={<ViewProfilePageAdmin />} />
+          <Route exact path="/view-profile" element={<ProtectedRoute><ViewProfilePage /></ProtectedRoute>} />
+          <Route exact path="/view-profile-admin" element={<ProtectedRoute><ViewProfilePageAdmin /></ProtectedRoute>} />
           <Route
             exact
             path="/voice-generator"

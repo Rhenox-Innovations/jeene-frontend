@@ -17,7 +17,7 @@ const Endpoints = {
   CHANGE_PASSWORD: "/User/ChangePassword",
   ACTIVATE_USER: "/User/ActivateUser",
   DEACTIVATE_USER: "/User/DeactivateUser",
-
+  EDIT_USER_ROLE: "/User/EditUserRoles",
   //Roles
   GET_ROLES: "/Role/GetAll",
 

@@ -28,10 +28,10 @@ const DashBoardLayerSix = () => {
                 <StudentProgressOne />
 
                 {/* CoursesOne */}
-                <CoursesOne />
+                {/* <CoursesOne /> */}
 
                 {/* CourseActivityOne */}
-                <CourseActivityOne />
+                {/* <CourseActivityOne /> */}
 
             </div>
         </>
