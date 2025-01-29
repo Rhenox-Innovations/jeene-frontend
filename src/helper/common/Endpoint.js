@@ -1,4 +1,6 @@
 const Endpoints = {
+  //BASE_URL: "https://jeeneapi.rhenoxinnovations.com/api",
+  BASE_URL: "https://localhost:44348/api",
   //Authentication
   SIGN_IN: "/Authentication/Login",
 
@@ -10,9 +12,17 @@ const Endpoints = {
   GET_USER_DETAILS: "/User/GetUserDetails",
   GET_ALL_USER_DETAILS: "/User/GetAllUserDetails",
   GET_ALL_USERS: "/User/GetAll",
-
+  DELETE_USER: "/User/Delete",
+  CREATE_USER: "/User/Create",
+  CHANGE_PASSWORD: "/User/ChangePassword",
+  ACTIVATE_USER: "/User/ActivateUser",
+  DEACTIVATE_USER: "/User/DeactivateUser",
+  EDIT_USER_ROLE: "/User/EditUserRoles",
   //Roles
   GET_ROLES: "/Role/GetAll",
+
+  //File Upload
+  UPLOAD_FILE: "/File/Upload",
 };
 
 export { Endpoints };

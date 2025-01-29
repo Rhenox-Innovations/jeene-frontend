@@ -1,8 +1,8 @@
 import axios from "axios";
+import { Endpoints } from "./common/Endpoint";
 
 const apiRequest = axios.create({
-  // baseURL: "https://jeeneapi.rhenoxinnovations.com/api",
-  baseURL: "https://localhost:44348/api",
+  baseURL: Endpoints.BASE_URL,
   timeout: 1000000,
   headers: {
     "Content-Type": "application/json",
@@ -26,6 +26,7 @@ apiRequest.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
       localStorage.removeItem("token");
+      window.location = "/sign-in" 
     }
     return Promise.reject(error);
   }

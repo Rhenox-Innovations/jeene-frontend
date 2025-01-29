@@ -1,246 +1,368 @@
-import { Icon } from '@iconify/react/dist/iconify.js';
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import apiRequest from '../helper/axios';
-import { Endpoints } from '../helper/common/Endpoint';
-import { event } from 'jquery';
+import { Icon } from "@iconify/react/dist/iconify.js";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import apiRequest from "../helper/axios";
+import { Endpoints } from "../helper/common/Endpoint";
+import { ThreeDots } from "react-loader-spinner";
+import Paginator from "./child/Paginator";
+import { Button, Modal } from "react-bootstrap";
 
 const UsersListLayer = () => {
+  const [userList, setUserList] = useState([]);
+  const [userListOld, setUserListOld] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [pageSize, setPageSize] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null)
+  const [showStatusPopup, setShowStatusPopup] = useState();
+  const [popupLoading, setPopupLoading] = useState(false)
 
-    const [userList, setUserList] = useState([]);
-    const [userListOld, setUserListOld] = useState([])
-    useEffect(() => {
+  useEffect(() => {
+    getUserData();
+  }, []);
+
+  const getUserData = async () => {
+    setLoading(true);
+    const response = await apiRequest.get(Endpoints.GET_ALL_USER_DETAILS);
+    setLoading(false);
+    if (response && response.data) {
+      setUserList(response.data.data);
+      setUserListOld(response.data.data);
+    }
+  };
+
+  const onStatusChange = (evt) => {
+    if (evt.target.value === "Active") {
+      let filtered = userListOld.filter((x) => x.isActive);
+      setUserList(filtered);
+    } else if (evt.target.value === "Blocked") {
+      let filtered = userListOld.filter((x) => !x.isActive);
+      setUserList(filtered);
+    } else {
+      setUserList(userListOld);
+    }
+  };
+
+  const onSearchValueChange = (evt) => {
+    let value = evt.target.value.toLowerCase();
+    if (value && userListOld?.length > 0) {
+      let filtered = userListOld?.filter(
+        (x) =>
+          x.fullName.toLowerCase().includes(value) ||
+          x.email.toLowerCase().includes(value) ||
+          x.roles.includes(value)
+      );
+      setUserList(filtered);
+    } else {
+      setUserList(userListOld);
+    }
+  };
+
+  const getCurrentPageData = () => {
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = Math.min(startIndex + pageSize, userList?.length);
+    return userList?.slice(startIndex, endIndex);
+  };
+
+  const openDeletePopup = (userId) => {
+    setSelectedUserId(userId)
+    setShowPopup(true)
+  }
+
+  const handleClose = () => {
+    setSelectedUserId(null)
+    setShowPopup(false)
+  }
+
+  const handleConfirm = async () => {
+    setPopupLoading(true)
+    const result = await apiRequest.delete(Endpoints.DELETE_USER + "/" + selectedUserId);
+    setPopupLoading(false)
+    if(result?.data?.success){
+      deleteFromUserData(selectedUserId)
+    }
+    setShowPopup(false)
+  }
+
+  const openStatusPopup = (userId, status) => {
+    setSelectedUserId(userId)
+    setShowStatusPopup(status)
+  }
+
+  
+  const handleStatusPopupClose = () => {
+    setSelectedUserId(null)
+    setShowStatusPopup()
+  }
+
+  const handleStatusPopupConfirm = async (status) => {
+    setPopupLoading(true)
+    const data = {
+      userId: selectedUserId
+    }
+    const result = status === "Activate" ? await apiRequest.post(Endpoints.ACTIVATE_USER, data) : await apiRequest.post(Endpoints.DEACTIVATE_USER, data);
+    setPopupLoading(false)
+    if(result?.data?.success){
         getUserData()
-    }, [])
-
-    const getUserData = async () => {
-        const response = await apiRequest.get(
-            Endpoints.GET_ALL_USER_DETAILS
-        );
-
-        if(response && response.data){
-            setUserList(response.data.data);
-            setUserListOld(response.data.data);
-        }
     }
+    setShowStatusPopup()
+  }
 
-    const onStatusChange = (evt) => {
-        if(evt.target.value === 'Active'){
-            let filtered = userListOld.filter(x => x.isActive)
-            setUserList(filtered);
-        }
-        else if(evt.target.value === 'Blocked'){
-            let filtered = userListOld.filter(x => !x.isActive)
-            setUserList(filtered);
-        }
-    }
+  const deleteFromUserData = (userId) => {
+    const filteredOld = userListOld.filter((i) => i?.id !== userId);
+    setUserListOld(filteredOld)
+    const filtered = userList.filter((i) => i?.id !== userId);
+    setUserList(filtered)
+  }
 
-    const onSearchValueChange = (evt) => {
-        let value = evt.target.value.toLowerCase();
-        if(value && userListOld?.length > 0){
-            let filtered = userListOld?.filter(x => x.fullName.toLowerCase().includes(value) || x.email.toLowerCase().includes(value) || x.roles.includes(value))
-            setUserList(filtered);
-        }else{
-            setUserList(userListOld);   
-        }
-    }
+  return (
+    <>
+    <Modal
+        show={showPopup}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to delete this user?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleConfirm} disabled={popupLoading} className="d-flex align-items-center"> 
+            <ThreeDots
+                height="20"
+                width="20"
+                radius="5"
+                color="#fff"
+                ariaLabel="loading"
+                wrapperStyle={{ marginRight: 5 }}
+                wrapperClass=""
+                visible={popupLoading}
+              />Confirm</Button>
+        </Modal.Footer>
+      </Modal>
+    
+      <Modal
+        show={showStatusPopup}
+        onHide={handleStatusPopupClose}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to <span className="tw-semibold">{showStatusPopup}</span> this user?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleStatusPopupClose}>
+            Close
+          </Button>
+          <Button variant="primary" disabled={popupLoading} className="d-flex align-items-center"
+          onClick={() => handleStatusPopupConfirm(showStatusPopup)}>
+            <ThreeDots
+                height="20"
+                width="20"
+                radius="5"
+                color="#fff"
+                ariaLabel="loading"
+                wrapperStyle={{ marginRight: 5 }}
+                wrapperClass=""
+                visible={popupLoading}/>
+            Confirm</Button>
+        </Modal.Footer>
+      </Modal>
+    <div className="card h-100 p-0 radius-12">
+      <div className="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
+        <div className="d-flex align-items-center flex-wrap gap-3">
+        <span className="text-md fw-medium text-secondary-light mb-0">Show</span>
+                    <select
+                        className="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px"
+                        value={pageSize}
+                        onChange={(e) => setPageSize(e.target.value)}
+                    >
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
 
-    return (
-        <div className="card h-100 p-0 radius-12">
-            <div className="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
-                <div className="d-flex align-items-center flex-wrap gap-3">
-                    <span className="text-md fw-medium text-secondary-light mb-0">Show</span>
-                    <form className="navbar-search">
-                        <input
-                            type="text"
-                            className="bg-base h-40-px w-auto"
-                            name="search"
-                            placeholder="Search"
-                            onChange={onSearchValueChange}
-                        />
-                        <Icon icon="ion:search-outline" className="icon" />
-                    </form>
-                    <select className="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px" onChange={onStatusChange} defaultValue="Select Status">
-                        <option value="Select Status" disabled>
-                            Select Status
-                        </option>
-                        <option value="Active">Active</option>
-                        <option value="Blocked">Blocked</option>
                     </select>
-                </div>
-                <Link
-                    to="/add-user"
-                    className="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2"
-                >
-                    <Icon
-                        icon="ic:baseline-plus"
-                        className="icon text-xl line-height-1"
-                    />
-                    Add New User
-                </Link>
-            </div>
-            <div className="card-body p-24">
-                <div className="table-responsive scroll-sm">
-                    <table className="table bordered-table sm-table mb-0">
-                        <thead>
-                            <tr>
-                                <th scope="col">
-                                    <div className="d-flex align-items-center gap-10">
-                                        S.no
-                                    </div>
-                                </th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Role</th>
-                                <th scope="col" className="text-center">
-                                    Status
-                                </th>
-                                <th scope="col" className="text-center">
-                                    Action
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {userList?.map((data, index) => UserRow(data, index))}
-                        </tbody>
-                    </table>
-                </div>
-                <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-24">
-                    <span>Showing 1 to 10 of 12 entries</span>
-                    <ul className="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center">
-                        <li className="page-item">
-                            <Link
-                                className="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px  text-md"
-                                to="#"
-                            >
-                                <Icon icon="ep:d-arrow-left" className="" />
-                            </Link>
-                        </li>
-                        <li className="page-item">
-                            <Link
-                                className="page-link text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md bg-primary-600 text-white"
-                                to="#"
-                            >
-                                1
-                            </Link>
-                        </li>
-                        <li className="page-item">
-                            <Link
-                                className="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px"
-                                to="#"
-                            >
-                                2
-                            </Link>
-                        </li>
-                        <li className="page-item">
-                            <Link
-                                className="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-                                to="#"
-                            >
-                                3
-                            </Link>
-                        </li>
-                        <li className="page-item">
-                            <Link
-                                className="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-                                to="#"
-                            >
-                                4
-                            </Link>
-                        </li>
-                        <li className="page-item">
-                            <Link
-                                className="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-                                to="#"
-                            >
-                                5
-                            </Link>
-                        </li>
-                        <li className="page-item">
-                            <Link
-                                className="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px  text-md"
-                                to="#"
-                            >
-                                {" "}
-                                <Icon icon="ep:d-arrow-right" className="" />{" "}
-                            </Link>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+          <form className="navbar-search">
+            <input
+              type="text"
+              className="bg-base h-40-px w-auto"
+              name="search"
+              placeholder="Search"
+              onChange={onSearchValueChange}
+            />
+            <Icon icon="ion:search-outline" className="icon" />
+          </form>
+          <select
+            className="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px"
+            onChange={onStatusChange}
+            defaultValue="Select Status"
+          >
+            <option value="Select Status">Select Status</option>
+            <option value="Active">Active</option>
+            <option value="Blocked">Blocked</option>
+          </select>
         </div>
-
-    );
+        <Link
+          to="/add-user"
+          className="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2"
+        >
+          <Icon
+            icon="ic:baseline-plus"
+            className="icon text-xl line-height-1"
+          />
+          Add New User
+        </Link>
+      </div>
+      <div className="card-body p-24">
+        <div className="table-responsive scroll-sm">
+          {loading ? (
+            <div className="d-flex align-items-center justify-content-center">
+              <ThreeDots
+                height="80"
+                width="80"
+                radius="5"
+                color="#487FFF"
+                ariaLabel="loading"
+                wrapperStyle={{ marginRight: 5 }}
+                wrapperClass=""
+                visible={loading}
+              />
+            </div>
+          ) : (
+            <>
+              <table className="table bordered-table sm-table mb-0">
+                <thead>
+                  <tr key={-1}>
+                    <th scope="col">
+                      <div className="d-flex align-items-center gap-10">
+                        S.no
+                      </div>
+                    </th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Role</th>
+                    <th scope="col" className="text-center">
+                      Status
+                    </th>
+                    <th scope="col" className="text-center">
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {getCurrentPageData()?.map((data, index) =>
+                    <UserRow key={index} data={data} index={index} openDeletePopup={openDeletePopup} openStatusPopup={openStatusPopup}/>
+                  )}
+                </tbody>
+              </table>
+              <Paginator
+                totalRows={userList?.length}
+                pageSize={pageSize}
+                onPageChange={(currentPage) => {
+                  setCurrentPage(currentPage);
+                }}
+              />
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+    </>
+  );
 };
 
-const UserRow = (data, index) => {
+const UserRow = ({data, index, openDeletePopup, openStatusPopup}) => {
     
-    const profilePicture = data?.profilePicture ? data.profilePicture :  "assets/images/users/user.png"
-    
-    return (<tr key={index}>
-        <td>
-            <div className="d-flex align-items-center gap-10">
-                
-                {index + 1}
-            </div>
-        </td>
-        <td>
-            <div className="d-flex align-items-center">
-                <img
-                    src={profilePicture}
-                    alt="profile"
-                    className="w-40-px h-40-px rounded-circle flex-shrink-0 me-12 overflow-hidden"
-                />
-                <div className="flex-grow-1">
-                    <span className="text-md mb-0 fw-normal text-secondary-light">
-                        {data?.fullName}
-                    </span>
-                </div>
-            </div>
-        </td>
-        <td>
+ const navigate = useNavigate();
+ 
+    const profilePicture = data?.profilePicture
+    ? data.profilePicture
+    : "assets/images/user.png";
+
+ 
+  const viewUserClicked = () => {
+    navigate("/view-profile", {state : {userId: data?.id}})
+  }
+
+  const editUserClicked = () => {
+    navigate("/view-profile", {state :  {userId: data?.id}})
+  }
+
+  return (
+    <tr key={index}>
+      <td>
+        <div className="d-flex align-items-center gap-10">{index + 1}</div>
+      </td>
+      <td>
+        <div className="d-flex align-items-center">
+          <img
+            src={profilePicture}
+            alt="profile"
+            className="w-40-px h-40-px rounded-circle flex-shrink-0 me-12 overflow-hidden"
+          />
+          <div className="flex-grow-1">
             <span className="text-md mb-0 fw-normal text-secondary-light">
-                {data?.email}
+              {data?.fullName}
             </span>
-        </td>
-        <td>{data?.roles?.[0]}</td>
-        <td className="text-center">
-            {
-               data?.isActive ? <span className="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">
-                Active
-            </span> : <span className="bg-danger-focus text-danger-600 border border-danger-main px-24 py-4 radius-4 fw-medium text-sm">
-                Blocked
-            </span>}
-        </td>
-        <td className="text-center">
-            <div className="d-flex align-items-center gap-10 justify-content-center">
-                <button
-                    type="button"
-                    className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
-                >
-                    <Icon
-                        icon="majesticons:eye-line"
-                        className="icon text-xl"
-                    />
-                </button>
-                <button
-                    type="button"
-                    className="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
-                >
-                    <Icon icon="lucide:edit" className="menu-icon" />
-                </button>
-                <button
-                    type="button"
-                    className="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
-                >
-                    <Icon
-                        icon="fluent:delete-24-regular"
-                        className="menu-icon"
-                    />
-                </button>
-            </div>
-        </td>
-    </tr>);
-}
+          </div>
+        </div>
+      </td>
+      <td>
+        <span className="text-md mb-0 fw-normal text-secondary-light">
+          {data?.email}
+        </span>
+      </td>
+      <td>{data?.roles?.[0]}</td>
+      <td className="text-center">
+        {data?.isActive ? (
+          <button className="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm"
+          onClick={() => openStatusPopup(data?.id, "Block")}>
+            Active
+          </button>
+        ) : (
+          <button className="bg-danger-focus text-danger-600 border border-danger-main px-24 py-4 radius-4 fw-medium text-sm"
+          onClick={() => openStatusPopup(data?.id, "Activate")}>
+            Blocked
+          </button>
+        )}
+      </td>
+      <td className="text-center">
+        <div className="d-flex align-items-center gap-10 justify-content-center">
+          <button
+            type="button"
+            className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+            onClick={viewUserClicked}
+          >
+            <Icon icon="majesticons:eye-line" className="icon text-xl" />
+          </button>
+          <button
+            type="button"
+            className="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+            onClick={editUserClicked}
+          >
+            <Icon icon="lucide:edit" className="menu-icon" />
+          </button>
+          <button
+            type="button"
+            className="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+            onClick={() => openDeletePopup(data?.id)}
+          >
+            <Icon icon="fluent:delete-24-regular" className="menu-icon" />
+          </button>
+        </div>
+      </td>
+    </tr>
+  );
+};
 
 export default UsersListLayer;
