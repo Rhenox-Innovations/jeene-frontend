@@ -243,14 +243,15 @@ const UsersListLayer = () => {
               <table className="table bordered-table sm-table mb-0">
                 <thead>
                   <tr key={-1}>
-                    <th scope="col">
+                    {/* <th scope="col">
                       <div className="d-flex align-items-center gap-10">
                         S.no
                       </div>
-                    </th>
+                    </th> */}
                     <th scope="col">Name</th>
                     <th scope="col">Email</th>
-                    <th scope="col">Role</th>
+                    <th scope="col">Joining Date</th>
+                    <th scope="col">Verified</th>
                     <th scope="col" className="text-center">
                       Status
                     </th>
@@ -298,11 +299,13 @@ const UserRow = ({data, index, openDeletePopup, openStatusPopup}) => {
     navigate("/view-profile", {state :  {userId: data?.id}})
   }
 
+  const joiningDate = new Date(data?.createdOn)
+
   return (
     <tr key={index}>
-      <td>
+      {/* <td>
         <div className="d-flex align-items-center gap-10">{index + 1}</div>
-      </td>
+      </td> */}
       <td>
         <div className="d-flex align-items-center">
           <img
@@ -310,10 +313,21 @@ const UserRow = ({data, index, openDeletePopup, openStatusPopup}) => {
             alt="profile"
             className="w-40-px h-40-px rounded-circle flex-shrink-0 me-12 overflow-hidden"
           />
-          <div className="flex-grow-1">
+          <div className="flex-grow-1 row">
             <span className="text-md mb-0 fw-normal text-secondary-light">
               {data?.fullName}
             </span>
+            <div>
+            {
+              data?.roles?.[0] === 'User' ? <span className="badge text-xsm fw-semibold rounded-pill bg-light-600 px-20 py-4 radius-4 text-dark">
+                User
+              </span>  :  data?.roles?.[0] === 'Admin' ? <span className="badge text-xsm fw-semibold rounded-pill bg-neutral-600 px-20 py-4 radius-4 text-base">
+                Admin
+              </span> : data?.roles?.[0] === 'Moderator' ? <span className="badge text-xsm fw-semibold rounded-pill bg-primary-400 px-20 py-4 radius-4 text-white">
+                Moderator
+              </span> : <></>
+            }
+            </div>
           </div>
         </div>
       </td>
@@ -322,22 +336,36 @@ const UserRow = ({data, index, openDeletePopup, openStatusPopup}) => {
           {data?.email}
         </span>
       </td>
-      <td>{data?.roles?.[0]}</td>
+      <td>
+        <span className="text-md mb-0 fw-normal text-secondary-light">
+          {joiningDate.toDateString()}
+        </span>
+      </td>
+      <td>{data?.emailConfirmed ? (
+          <span className="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">
+            Verified
+          </span>
+        ) : (
+          <span className="bg-warning-focus text-warning-600 border border-warning-main px-24 py-4 radius-4 fw-medium text-sm">
+            Not Verified
+          </span>
+        )}</td>
       <td className="text-center">
         {data?.isActive ? (
-          <button className="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm"
+          <span className="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm"
           onClick={() => openStatusPopup(data?.id, "Block")}>
             Active
-          </button>
+          </span>
         ) : (
-          <button className="bg-danger-focus text-danger-600 border border-danger-main px-24 py-4 radius-4 fw-medium text-sm"
+          <span className="bg-danger-focus text-danger-600 border border-danger-main px-24 py-4 radius-4 fw-medium text-sm"
           onClick={() => openStatusPopup(data?.id, "Activate")}>
             Blocked
-          </button>
+          </span>
         )}
       </td>
       <td className="text-center">
         <div className="d-flex align-items-center gap-10 justify-content-center">
+          
           <button
             type="button"
             className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
@@ -359,6 +387,22 @@ const UserRow = ({data, index, openDeletePopup, openStatusPopup}) => {
           >
             <Icon icon="fluent:delete-24-regular" className="menu-icon" />
           </button>
+          {
+            data?.isActive ? <button
+            type="button"
+            className="bg-warning-focus bg-hover-warning-200 text-warning-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+            onClick={() => openStatusPopup(data?.id, "Block")}
+          >
+            <Icon icon="fluent:presence-blocked-24-regular" className="menu-icon" />
+          </button> : 
+          <button
+            type="button"
+            className="bg-success-focus bg-hover-success-200 text-success-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+            onClick={() => openStatusPopup(data?.id, "Activate")}
+          >
+            <Icon icon="fa6-solid:check" className="menu-icon" />
+          </button>
+          }
         </div>
       </td>
     </tr>

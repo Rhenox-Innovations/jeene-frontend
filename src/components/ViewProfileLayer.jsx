@@ -492,6 +492,7 @@ const ViewProfileLayer = ({ page }) => {
                             value={role}
                             onChange={(e) => setRole(e.target.value)}
                             required="required"
+                            disabled="disabled"
                           >
                             <option value="Select User Role" disabled>
                               Select User Role
