@@ -14,11 +14,12 @@ const UsersListLayer = () => {
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [showPopup, setShowPopup] = useState(false);
-  const [selectedUserId, setSelectedUserId] = useState(null)
+  const [selectedUserId, setSelectedUserId] = useState(null);
   const [showStatusPopup, setShowStatusPopup] = useState();
-  const [popupLoading, setPopupLoading] = useState(false)
+  const [popupLoading, setPopupLoading] = useState(false);
+  const [deactiveReason, setDeactivateReason] = useState("");
 
-  useEffect(() => {
+  useEffect(() => { 
     getUserData();
   }, []);
 
@@ -98,8 +99,11 @@ const UsersListLayer = () => {
 
   const handleStatusPopupConfirm = async (status) => {
     setPopupLoading(true)
-    const data = {
+    let data = {
       userId: selectedUserId
+    }
+    if(status == "Block"){
+      data = {...data, deactivateReason: deactiveReason}
     }
     const result = status === "Activate" ? await apiRequest.post(Endpoints.ACTIVATE_USER, data) : await apiRequest.post(Endpoints.DEACTIVATE_USER, data);
     setPopupLoading(false)
@@ -147,7 +151,6 @@ const UsersListLayer = () => {
               />Confirm</Button>
         </Modal.Footer>
       </Modal>
-    
       <Modal
         show={showStatusPopup}
         onHide={handleStatusPopupClose}
@@ -159,13 +162,14 @@ const UsersListLayer = () => {
         </Modal.Header>
         <Modal.Body>
           Are you sure you want to <span className="tw-semibold">{showStatusPopup}</span> this user?
+        {showStatusPopup == "Block" ? <input  className="form-control radius-8" type="text" onChange={(e) => setDeactivateReason(e.target.value)} placeholder="Reason to block?" required /> :<></> }
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleStatusPopupClose}>
             Close
           </Button>
           <Button variant="primary" disabled={popupLoading} className="d-flex align-items-center"
-          onClick={() => handleStatusPopupConfirm(showStatusPopup)}>
+          onClick={() => showStatusPopup == "Block" ? deactiveReason != "" && handleStatusPopupConfirm(showStatusPopup) : handleStatusPopupConfirm(showStatusPopup)}>
             <ThreeDots
                 height="20"
                 width="20"
