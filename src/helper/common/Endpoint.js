@@ -1,6 +1,7 @@
 const Endpoints = {
   BASE_URL: "https://jeeneapi.rhenoxinnovations.com/api",
-  // BASE_URL: "https://localhost:44348/api",
+  //BASE_URL: "https://localhost:44348/api",
+
   //Authentication
   SIGN_IN: "/Authentication/Login",
 
