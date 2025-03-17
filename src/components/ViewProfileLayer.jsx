@@ -24,6 +24,11 @@ const ViewProfileLayer = ({ page }) => {
   const [interests, setInterests] = useState(userData?.interests);
   const [roleData, setRoleData] = useState([]);
   const [interestData, setInterestData] = useState([]);
+  const [isActive, setIsActive] = useState(userData?.isActive);
+  const [emailConfirmed, setEmailConfirmed] = useState(userData?.emailConfirmed);
+  const [joiningDate, setjoiningDate] = useState(userData?.createdOn);
+  const [deactivateReason, setDeactivateReason] = useState(userData?.deactivateReason);
+
   const [loading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);
   const [userId, setUserId] = useState(userData?.id);
@@ -72,6 +77,10 @@ const ViewProfileLayer = ({ page }) => {
         setBio(userProfile.bio);
         setInterests(userProfile.interests);
         setRole(userProfile.roles?.[0]);
+        setIsActive(userProfile.isActive);
+        setjoiningDate(userProfile.createdOn);
+        setEmailConfirmed(userProfile.emailConfirmed);
+        setDeactivateReason(userProfile.deactivateReason);
       }
       setPageLoading(false);
     }
@@ -215,7 +224,6 @@ const ViewProfileLayer = ({ page }) => {
         }
     }
   }
-  
   return (
     <div className="row gy-4">
       <div className="col-lg-4">
@@ -252,7 +260,7 @@ const ViewProfileLayer = ({ page }) => {
                 />
               </div>
             ) : (
-              <div className="mt-24">
+              <div className="mt-24 w-40">
                 <h6 className="text-xl mb-16">Personal Info</h6>
                 <ul>
                   <li className="d-flex align-items-center gap-1 mb-12">
@@ -292,7 +300,7 @@ const ViewProfileLayer = ({ page }) => {
                       {bio ? bio : "N/A"}
                     </span>
                   </li>
-                  <li className="d-flex align-items-center gap-1">
+                  <li className="d-flex align-items-center gap-1 mb-12">
                     <span className="w-30 text-md fw-semibold text-primary-light">
                       {" "}
                       Interests
@@ -303,7 +311,51 @@ const ViewProfileLayer = ({ page }) => {
                         : "N/A"}
                     </span>
                   </li>
+                  
+                  <li className="d-flex align-items-center gap-1 mb-12">
+                    <span className="w-30 text-md fw-semibold text-primary-light">
+                      {" "}
+                      Joining Date
+                    </span>
+                    <span className="w-70 text-secondary-light fw-medium">
+                      {joiningDate ? new Date(joiningDate).toDateString() : "N/A"}
+                    </span>
+                  </li>   
+                  {
+                    !isActive &&
+                    <li className="d-flex align-items-center gap-1 mb-12">
+                      <span className="w-30 text-md fw-semibold text-primary-light">
+                        {" "}
+                        Block Reason
+                      </span>
+                      <span className="w-70 text-secondary-light fw-medium">
+                        {deactivateReason}
+                      </span>
+                    </li>   
+                  }
                 </ul>
+                <div className="d-flex">
+                {
+                      isActive ? 
+                      <span className="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm mr-10">
+                        Active
+                      </span> : 
+                      <span className="bg-danger-focus text-danger-600 border border-danger-main px-24 py-4 radius-4 fw-medium text-sm mr-10">
+                        Blocked
+                      </span>
+                    }
+
+                    {
+                      emailConfirmed ? 
+                      <span className="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">
+                        Verified
+                      </span> : 
+                      <span className="bg-warning-focus text-warning-600 border border-warning-main px-24 py-4 radius-4 fw-medium text-sm">
+                        Not Verified
+                      </span>
+                    }
+                    
+                  </div>
               </div>
             )}
           </div>
