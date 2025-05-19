@@ -7,6 +7,15 @@ const Endpoints = {
 
   //Categories
   GET_CATEGORIES: "/Category/GetAll",
+  CREATE_CATEGORIES: "/Category/Create",
+  UPDATE_CATEGORIES: "/Category/Update",
+  DELETE_CATEGORIES: "/Category/Delete",
+
+  //SubCategories
+  GET_SUB_CATEGORIES: "/SubCategory/GetAll",
+  CREATE_SUB_CATEGORIES: "/SubCategory/Create",
+  UPDATE_SUB_CATEGORIES: "/SubCategory/Update",
+  DELETE_SUB_CATEGORIES: "/SubCategory/Delete",
 
   //User
   EDIT_USER_PROFILE: "/User/EditUserProfile",

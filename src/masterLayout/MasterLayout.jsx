@@ -908,6 +908,109 @@ const MasterLayout = ({ children }) => {
                 </li>
               </ul>
             </li>
+            
+             {/* Categories Dropdown */}
+             <li className="dropdown">
+              <Link to="#">
+                <Icon
+                  icon="flowbite:align-left-outline"
+                  className="menu-icon"
+                />
+                <span>Categories</span>
+              </Link>
+              <ul className="sidebar-submenu">
+                <li>
+                  <NavLink
+                    to="/categories-list"
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className="ri-circle-fill circle-icon text-primary-600 w-auto" />{" "}
+                    Categories List
+                  </NavLink>
+                </li>
+                {/* <li>
+                  <NavLink
+                    to="/users-grid"
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className="ri-circle-fill circle-icon text-warning-main w-auto" />{" "}
+                    Users Grid
+                  </NavLink>
+                </li> */}
+                <li>
+                  <NavLink
+                    to="/add-category"
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className="ri-circle-fill circle-icon text-info-main w-auto" />{" "}
+                    Add Category
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/edit-category"
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className="ri-circle-fill circle-icon text-danger-main w-auto" />{" "}
+                    Edit Category
+                  </NavLink>
+                </li>
+              </ul>
+            </li>
+
+            {/* SubCategories Dropdown */}
+            <li className="dropdown">
+              <Link to="#">
+                <Icon
+                  icon="flowbite:align-left-outline"
+                  className="menu-icon"
+                />
+                <span>Sub-Categories</span>
+              </Link>
+              <ul className="sidebar-submenu">
+                <li>
+                  <NavLink
+                    to="/sub-categories-list"
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className="ri-circle-fill circle-icon text-primary-600 w-auto" />{" "}
+                    Sub-Categories List
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/add-sub-category"
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className="ri-circle-fill circle-icon text-info-main w-auto" />{" "}
+                    Add Sub-Category
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/edit-sub-category"
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className="ri-circle-fill circle-icon text-danger-main w-auto" />{" "}
+                    Edit Sub-Category
+                  </NavLink>
+                </li>
+              </ul>
+            </li>
 
             {/* <li className="sidebar-menu-group-title">Application</li> */}
 

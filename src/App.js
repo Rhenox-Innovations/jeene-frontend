@@ -85,6 +85,11 @@ import { Provider } from "react-redux";
 import store from "./redux/store/store";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ViewProfilePageAdmin from "./pages/ViewProfilePageAdmin";
+import AddCategoryPage from "./pages/AddCategoryPage";
+import AddSubCategoryPage from "./pages/AddSubCategoryPage";
+import CategoriesListPage from "./pages/CategoriesListPage";
+import SubCategoriesListPage from "./pages/SubCategoriesListPage";
+import EditCategoryPage from "./pages/EditCategoryPage";
 
 function App() {
   return (
@@ -111,6 +116,12 @@ function App() {
 
           {/* SL */}
           <Route exact path="/add-user" element={ <ProtectedRoute><AddUserPage /></ProtectedRoute>} />
+          <Route exact path="/add-category" element={ <ProtectedRoute><AddCategoryPage /></ProtectedRoute>} />
+          <Route exact path="/add-sub-category" element={ <ProtectedRoute><AddSubCategoryPage /></ProtectedRoute>} />
+          
+
+          <Route exact path="/edit-category" element={ <ProtectedRoute><EditCategoryPage /></ProtectedRoute>} />
+          
           <Route exact path="/alert" element={<AlertPage />} />
           <Route exact path="/assign-role" element={
             <ProtectedRoute><AssignRolePage /></ProtectedRoute>
@@ -217,7 +228,11 @@ function App() {
           <Route exact path="/tooltip" element={<TooltipPage />} />
           <Route exact path="/typography" element={<TypographyPage />} />
           <Route exact path="/users-grid" element={<UsersGridPage />} />
+
           <Route exact path="/users-list" element={<ProtectedRoute><UsersListPage /></ProtectedRoute>} />
+          <Route exact path="/categories-list" element={<ProtectedRoute><CategoriesListPage /></ProtectedRoute>} />
+          <Route exact path="/sub-categories-list" element={<ProtectedRoute><SubCategoriesListPage /></ProtectedRoute>} />
+
           <Route exact path="/view-details" element={<ViewDetailsPage />} />
           <Route
             exact
