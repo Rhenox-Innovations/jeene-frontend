@@ -17,8 +17,9 @@ const SubsubCategoriesListLayer = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const [popupLoading, setPopupLoading] = useState(false);
-
+  
   useEffect(() => { 
+    
     loadData();
   }, []);
 
@@ -225,13 +226,9 @@ const SubsubCategoriesListLayer = () => {
 const CategoryRow = ({data, index, openDeletePopup, getCategoryById}) => {
     
  const navigate = useNavigate();
- 
-  const viewUserClicked = () => {
-    navigate("/view-sub-category", {state : {id: data?.id}})
-  }
 
   const editUserClicked = () => {
-    navigate("/view-sub-category", {state :  {id: data?.id}})
+    navigate("/edit-sub-category", {state:  data})
   }
 
   

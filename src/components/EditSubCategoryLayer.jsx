@@ -1,23 +1,29 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import apiRequest from "../helper/axios";
 import { Endpoints } from "../helper/common/Endpoint";
 import { ThreeDots } from "react-loader-spinner";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const EditCategoryLayer = () => {
-  const { state } = useLocation();
+const EditSubCategoryLayer = () => {
+  const {state} = useLocation();
   const [name, setName] = useState(state?.name);
   const [description, setDescription] = useState(state?.description);
-  const [showOnDashboard, setShowOnDashboard] = useState(state?.showOnDashboard);
+  const [categoryId, setCategoryId] = useState(state?.categoryId);
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState();
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate();
+  const [categoriesList, setCategoriesList] = useState([])
+  const navigate = useNavigate()
+  
   if(!state){
-          navigate("/categories-list")
+    navigate("/sub-categories-list")
   }
+  useEffect(() => {
+    loadCategoriesList();
+  }, [])
+
   const submitHandler = async (e) => {
     e.preventDefault()
 
@@ -30,10 +36,10 @@ const EditCategoryLayer = () => {
             id: state?.id,
             name,
             description,
-            showOnDashboard
+            categoryId
         }
         try{
-            const result = await apiRequest.put(Endpoints.UPDATE_CATEGORIES, requestData);
+            const result = await apiRequest.put(Endpoints.UPDATE_SUB_CATEGORIES, requestData);
             setLoading(false)
             if(result?.status === 200 && result?.data?.success){
                 showSuccessMessage()
@@ -49,7 +55,7 @@ const EditCategoryLayer = () => {
   const cancelHandler = () => {
     setName("");
     setDescription("");
-    setShowOnDashboard("");
+    setCategoryId("");
   }
 
   const showSuccessMessage = () => {
@@ -68,10 +74,16 @@ const EditCategoryLayer = () => {
     if(description.length < 3){
         errorList = {...errorList, description: "Description must have 3 or more characters"}
     }
-
+    
 
     setErrors(errorList)
     return Object.keys(errorList).length <= 0
+  }
+
+  const loadCategoriesList = async () => {
+
+    var result = await apiRequest.get(Endpoints.GET_CATEGORIES);
+    setCategoriesList(result?.data?.data);
   }
 
   return (
@@ -84,7 +96,7 @@ const EditCategoryLayer = () => {
                             className="alert alert-primary bg-primary-50 text-primary-600 border-primary-50 px-24 py-11 mb-0 text-lg radius-8 d-flex align-items-center justify-content-between mb-10"
                             role="alert"
                         >
-                            Category updated successfully!
+                            Sub-Category updated successfully!
                             <button className="remove-button text-primary-600 text-xxl line-height-1" onClick={() => setShowSuccess(false)}>
                             {" "}
                             <Icon icon="iconamoon:sign-times-light" className="icon" />
@@ -144,27 +156,24 @@ const EditCategoryLayer = () => {
 
                   <div className="mb-20">
                     <label
-                      htmlFor="showOnDashboard"
+                      htmlFor="category"
                       className="form-label fw-semibold text-primary-light text-sm mb-8"
                     >
-                      Show on dashboard
+                      Category
                       <span className="text-danger-600">*</span>{" "}
                     </label>
                     <select
                       className="form-control radius-8 form-select"
-                      id="showOnDashboard"
-                      value={showOnDashboard}
-                      onChange={(e) => setShowOnDashboard(e.target.value)}
+                      id="category"
+                      value={categoryId}
+                      defaultValue={""}
+                      onChange={(e) => setCategoryId(e.target.value)}
                       required
                     >
-                      <option value="Select" disabled>
-                        Select
+                      <option value="" disabled>
+                        Select Category
                       </option>
-                      <option value={true}>Yes</option>
-                      <option value={false}>
-                        No
-                      </option>
-                      
+                      { categoriesList?.map((val) => <option value={val?.id}>{val?.name}</option> )}
                     </select>
                   </div>
                  
@@ -204,4 +213,4 @@ const EditCategoryLayer = () => {
   );
 };
 
-export default EditCategoryLayer;
+export default EditSubCategoryLayer;

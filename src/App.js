@@ -90,6 +90,7 @@ import AddSubCategoryPage from "./pages/AddSubCategoryPage";
 import CategoriesListPage from "./pages/CategoriesListPage";
 import SubCategoriesListPage from "./pages/SubCategoriesListPage";
 import EditCategoryPage from "./pages/EditCategoryPage";
+import EditSubCategoryPage from "./pages/EditSubCategoryPage";
 
 function App() {
   return (
@@ -119,9 +120,9 @@ function App() {
           <Route exact path="/add-category" element={ <ProtectedRoute><AddCategoryPage /></ProtectedRoute>} />
           <Route exact path="/add-sub-category" element={ <ProtectedRoute><AddSubCategoryPage /></ProtectedRoute>} />
           
-
           <Route exact path="/edit-category" element={ <ProtectedRoute><EditCategoryPage /></ProtectedRoute>} />
-          
+          <Route exact path="/edit-sub-category" element={ <ProtectedRoute><EditSubCategoryPage /></ProtectedRoute>} />
+
           <Route exact path="/alert" element={<AlertPage />} />
           <Route exact path="/assign-role" element={
             <ProtectedRoute><AssignRolePage /></ProtectedRoute>
