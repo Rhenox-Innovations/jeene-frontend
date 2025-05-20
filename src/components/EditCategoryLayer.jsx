@@ -30,13 +30,14 @@ const EditCategoryLayer = () => {
             id: state?.id,
             name,
             description,
-            showOnDashboard
+            showOnDashboard: Boolean(showOnDashboard)
         }
         try{
             const result = await apiRequest.put(Endpoints.UPDATE_CATEGORIES, requestData);
             setLoading(false)
             if(result?.status === 200 && result?.data?.success){
                 showSuccessMessage()
+                state = requestData
                 cancelHandler()
             }
         }catch(err){
@@ -47,9 +48,9 @@ const EditCategoryLayer = () => {
   }
 
   const cancelHandler = () => {
-    setName("");
-    setDescription("");
-    setShowOnDashboard("");
+    setName(state?.name);
+    setDescription(state?.description);
+    setShowOnDashboard(state?.showOnDashboard);
   }
 
   const showSuccessMessage = () => {

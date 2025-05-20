@@ -43,6 +43,7 @@ const EditSubCategoryLayer = () => {
             setLoading(false)
             if(result?.status === 200 && result?.data?.success){
                 showSuccessMessage()
+                state = requestData
                 cancelHandler()
             }
         }catch(err){
@@ -53,9 +54,9 @@ const EditSubCategoryLayer = () => {
   }
 
   const cancelHandler = () => {
-    setName("");
-    setDescription("");
-    setCategoryId("");
+    setName(state?.name);
+    setDescription(state?.description);
+    setCategoryId(state?.categoryId);
   }
 
   const showSuccessMessage = () => {
