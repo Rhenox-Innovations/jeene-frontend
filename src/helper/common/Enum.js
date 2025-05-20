@@ -5,5 +5,10 @@ const UserRole = {
 };
 
 
-export {UserRole};
+const ReviewStatus = {
+    Pending: 1,
+    Approved: 2,
+    Rejected: 3
+}
+export {UserRole, ReviewStatus};
 

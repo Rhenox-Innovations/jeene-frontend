@@ -28,11 +28,21 @@ const Endpoints = {
   ACTIVATE_USER: "/User/ActivateUser",
   DEACTIVATE_USER: "/User/DeactivateUser",
   EDIT_USER_ROLE: "/User/EditUserRoles",
+
   //Roles
   GET_ROLES: "/Role/GetAll",
 
   //File Upload
   UPLOAD_FILE: "/File/Upload",
+
+  //Reviews
+  GET_ALL_REVIEWS: "/Review/GetAll",
+  UPDATE_REVIEW_STATUS:  "/Review/UpdateStatus",
+  UPDATE_REVIEW:  "/Review/Update",
+  DELETE_REVIEW:  "/Review/Delete",
+ 
+
+
 };
 
 export { Endpoints };
