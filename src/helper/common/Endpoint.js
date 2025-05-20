@@ -37,12 +37,9 @@ const Endpoints = {
 
   //Reviews
   GET_ALL_REVIEWS: "/Review/GetAll",
-  UPDATE_REVIEW_STATUS:  "/Review/UpdateStatus",
-  UPDATE_REVIEW:  "/Review/Update",
-  DELETE_REVIEW:  "/Review/Delete",
- 
-
-
+  UPDATE_REVIEW_STATUS: "/Review/UpdateStatus",
+  UPDATE_REVIEW: "/Review/Update",
+  DELETE_REVIEW: "/Review/Delete",
 };
 
 export { Endpoints };

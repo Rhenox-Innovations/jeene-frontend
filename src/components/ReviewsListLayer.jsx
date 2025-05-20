@@ -26,16 +26,16 @@ const ReviewsListLayer = () => {
 
   const loadData = async () => {
     setLoading(true);
-    const response = await apiRequest.get(Endpoints.GET_ALL_REVIEWS);
+    let response = await apiRequest.get(Endpoints.GET_ALL_REVIEWS);
     setLoading(false);
     if (response && response.data) {
       setReviewList(response.data.data);
       setReviewListOld(response.data.data);
     }
+    
   };
 
   const onStatusChange = (evt) => {
-    
     if (evt.target.value) {
       let filtered = reviewOldList.filter((x) => x.status == evt.target.value);
       setReviewList(filtered);
@@ -320,11 +320,7 @@ const ReviewRow = ({ data, index, openDeletePopup, openStatusPopup }) => {
   const navigate = useNavigate();
 
   const viewReviewClicked = () => {
-    navigate("/view-review", { state: data });
-  };
-
-  const editReviewClicked = () => {
-    navigate("/edit-profile", { state: data });
+    navigate("/review-details", { state: data });
   };
 
   const postedDateTime = new Date(data?.postedDateTime);
@@ -371,7 +367,6 @@ const ReviewRow = ({ data, index, openDeletePopup, openStatusPopup }) => {
         ) : data?.status == ReviewStatus.Rejected ? (
           <span
             className="bg-danger-focus text-danger-600 border border-danger-main px-24 py-4 radius-4 fw-medium text-sm"
-            onClick={() => openStatusPopup(data?.id, "Activate")}
           >
             Rejected
           </span>
@@ -387,13 +382,6 @@ const ReviewRow = ({ data, index, openDeletePopup, openStatusPopup }) => {
             onClick={viewReviewClicked}
           >
             <Icon icon="majesticons:eye-line" className="icon text-xl" />
-          </button>
-          <button
-            type="button"
-            className="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
-            onClick={editReviewClicked}
-          >
-            <Icon icon="lucide:edit" className="menu-icon" />
           </button>
           <button
             type="button"
