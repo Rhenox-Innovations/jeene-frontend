@@ -228,7 +228,31 @@ const MasterLayout = ({ children }) => {
                 </li>
               </ul>
             </li>
-            
+                    
+            {/* Review Management Dropdown */}
+            <li className="dropdown">
+              <Link to="#">
+                <Icon
+                  icon="flowbite:star-outline"
+                  className="menu-icon"
+                />
+                <span>Review Management</span>
+              </Link>
+              <ul className="sidebar-submenu">
+                <li>
+                  <NavLink
+                    to="/reviews-list"
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className="ri-circle-fill circle-icon text-primary-600 w-auto" />{" "}
+                    Reviews List
+                  </NavLink>
+                </li>
+              </ul>
+            </li>
+
              {/* Categories Dropdown */}
              <li className="dropdown">
               <Link to="#">
@@ -331,52 +355,53 @@ const MasterLayout = ({ children }) => {
                 </li>
               </ul>
             </li>
-            
-            {/* Review Management Dropdown */}
-            <li className="dropdown">
+
+             {/* RatingParameter Dropdown */}
+             <li className="dropdown">
               <Link to="#">
                 <Icon
-                  icon="flowbite:star-outline"
+                  icon="flowbite:ordered-list-outline"
                   className="menu-icon"
                 />
-                <span>Review Management</span>
+                <span>Rating Parameters</span>
               </Link>
               <ul className="sidebar-submenu">
                 <li>
                   <NavLink
-                    to="/reviews-list"
+                    to="/rating-parameter-list"
                     className={(navData) =>
                       navData.isActive ? "active-page" : ""
                     }
                   >
                     <i className="ri-circle-fill circle-icon text-primary-600 w-auto" />{" "}
-                    Reviews List
+                    Rating Parameters List
                   </NavLink>
                 </li>
-                {/* <li>
+                <li>
                   <NavLink
-                    to="/add-sub-category"
+                    to="/add-rating-parameter"
                     className={(navData) =>
                       navData.isActive ? "active-page" : ""
                     }
                   >
                     <i className="ri-circle-fill circle-icon text-info-main w-auto" />{" "}
-                    Add Sub-Category
+                    Add Rating Parameter
                   </NavLink>
                 </li>
                 <li>
                   <NavLink
-                    to="/edit-sub-category"
+                    to="/edit-rating-parameter"
                     className={(navData) =>
                       navData.isActive ? "active-page" : ""
                     }
                   >
                     <i className="ri-circle-fill circle-icon text-danger-main w-auto" />{" "}
-                    Edit Sub-Category
+                    Edit Rating Parameter
                   </NavLink>
-                </li> */}
+                </li>
               </ul>
             </li>
+
             {/* Settings Dropdown */}
             <li className="dropdown">
               <Link to="#">

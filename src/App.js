@@ -23,6 +23,9 @@ import EditCategoryPage from "./pages/EditCategoryPage";
 import EditSubCategoryPage from "./pages/EditSubCategoryPage";
 import ReviewsListPage from "./pages/ReviewsListPage";
 import ReviewDetailsPage from "./pages/ReviewDetailsPage";
+import RatingParameterListPage from "./pages/RatingParameterListPage";
+import AddRatingParameterPage from "./pages/AddRatingParameterPage";
+import EditRatingParameterPage from "./pages/EditRatingParameterPage";
 
 function App() {
   return (
@@ -149,6 +152,36 @@ function App() {
             element={
               <ProtectedRoute>
                 <SubCategoriesListPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            exact
+            path="/rating-parameter-list"
+            element={
+              <ProtectedRoute>
+                <RatingParameterListPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            exact
+            path="/add-rating-parameter"
+            element={
+              <ProtectedRoute>
+                <AddRatingParameterPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            exact
+            path="/edit-rating-parameter"
+            element={
+              <ProtectedRoute>
+                <EditRatingParameterPage />
               </ProtectedRoute>
             }
           />

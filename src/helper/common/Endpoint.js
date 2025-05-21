@@ -40,6 +40,13 @@ const Endpoints = {
   UPDATE_REVIEW_STATUS: "/Review/UpdateStatus",
   UPDATE_REVIEW: "/Review/Update",
   DELETE_REVIEW: "/Review/Delete",
+
+  //Rating Parameters
+  GET_ALL_RATING_PARAMETERS: "/RatingParameter/GetAll",
+  CREATE_RATING_PARAMETER:  "/RatingParameter/Create",
+  UPDATE_RATING_PARAMETER:  "/RatingParameter/Update",
+  DELETE_RATING_PARAMETER:  "/RatingParameter/Delete",
+  GET_RATING_PARAMETER_BY_CATEGORY: "/RatingParameter/GetByCategoryId"
 };
 
 export { Endpoints };

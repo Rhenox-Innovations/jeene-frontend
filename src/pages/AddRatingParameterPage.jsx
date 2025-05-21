@@ -1,19 +1,19 @@
 import React from "react";
 import MasterLayout from "../masterLayout/MasterLayout";
 import Breadcrumb from "../components/Breadcrumb";
-import AddSubCategoryLayer from "../components/AddSubCategoryLayer";
+import AddRatingParameterLayer from "../components/AddRatingParameterLayer";
 
-const AddSubCategoryPage = () => {
+const AddRatingParameterPage = () => {
   return (
     <>
       {/* MasterLayout */}
       <MasterLayout>
 
         {/* Breadcrumb */}
-        <Breadcrumb title="Add Sub-category" />
+        <Breadcrumb title="Add Rating Parameter" />
 
         {/* AddSubCategoryLayer */}
-        <AddSubCategoryLayer />
+        <AddRatingParameterLayer />
 
 
       </MasterLayout>
@@ -21,4 +21,4 @@ const AddSubCategoryPage = () => {
   );
 };
 
-export default AddSubCategoryPage;
+export default AddRatingParameterPage;
