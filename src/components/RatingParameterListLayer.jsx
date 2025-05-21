@@ -65,13 +65,13 @@ const RatingParameterListLayer = () => {
   }
 
   const handleClose = () => {
-    selectedId(null)
+    setSelectedId(null)
     setShowPopup(false)
   }
 
   const handleConfirm = async () => {
     setPopupLoading(true)
-    const result = await apiRequest.delete(Endpoints.DELETE_RATING_PARAMETER + "/" + selectedId);
+    const result = await apiRequest.delete(Endpoints.DELETE_RATING_PARAMETER, {data: {id: selectedId}});
     setPopupLoading(false)
     if(result?.data?.success){
       deleteFromUserData(selectedId)

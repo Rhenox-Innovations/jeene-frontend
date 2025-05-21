@@ -66,13 +66,13 @@ const SubsubCategoriesListLayer = () => {
   }
 
   const handleClose = () => {
-    selectedId(null)
+    setSelectedId(null)
     setShowPopup(false)
   }
 
   const handleConfirm = async () => {
     setPopupLoading(true)
-    const result = await apiRequest.delete(Endpoints.DELETE_SUB_CATEGORIES + "/" + selectedId);
+    const result = await apiRequest.post(Endpoints.DELETE_SUB_CATEGORIES, {subCategoryId: selectedId});
     setPopupLoading(false)
     if(result?.data?.success){
       deleteFromUserData(selectedId)

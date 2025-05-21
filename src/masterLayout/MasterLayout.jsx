@@ -89,6 +89,10 @@ const MasterLayout = ({ children }) => {
     navigate('/sign-in');
   }
 
+  const NavBarList = () => [
+    
+  ]
+
   return (
     <section className={mobileMenu ? "overlay active" : "overlay "}>
       {/* sidebar */}
