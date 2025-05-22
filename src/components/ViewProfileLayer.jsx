@@ -363,7 +363,7 @@ const ViewProfileLayer = ({ page }) => {
           </div>
         </div>
       </div>
-      { !state?.userId || permissions?.includes("/edit-user") &&  <div className="col-lg-8">
+      { state == null || permissions?.includes("/edit-user") &&  <div className="col-lg-8">
         
         {!pageLoading && (
           <div className="card h-100">
