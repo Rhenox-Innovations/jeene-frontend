@@ -6,6 +6,7 @@ import { Endpoints } from "../helper/common/Endpoint";
 import { ThreeDots } from "react-loader-spinner";
 import Paginator from "./child/Paginator";
 import { Button, Modal } from "react-bootstrap";
+import { useSelector } from "react-redux";
 
 const UsersListLayer = () => {
   const [userList, setUserList] = useState([]);
@@ -288,7 +289,7 @@ const UsersListLayer = () => {
 };
 
 const UserRow = ({data, index, openDeletePopup, openStatusPopup}) => {
-    
+ const permissions = useSelector(state => state?.auth?.permissions)
  const navigate = useNavigate();
  
     const profilePicture = data?.profilePicture
@@ -370,30 +371,38 @@ const UserRow = ({data, index, openDeletePopup, openStatusPopup}) => {
       </td>
       <td className="text-center">
         <div className="d-flex align-items-center gap-10 justify-content-center">
-          
-          <button
-            type="button"
-            className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
-            onClick={viewUserClicked}
-          >
-            <Icon icon="majesticons:eye-line" className="icon text-xl" />
-          </button>
-          <button
-            type="button"
-            className="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
-            onClick={editUserClicked}
-          >
-            <Icon icon="lucide:edit" className="menu-icon" />
-          </button>
-          <button
-            type="button"
-            className="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
-            onClick={() => openDeletePopup(data?.id)}
-          >
-            <Icon icon="fluent:delete-24-regular" className="menu-icon" />
-          </button>
           {
-            data?.isActive ? <button
+            permissions?.includes("/view-user-profile") &&
+            <button
+              type="button"
+              className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+              onClick={viewUserClicked}
+            >
+              <Icon icon="majesticons:eye-line" className="icon text-xl" />
+            </button>
+          }
+          {
+             permissions?.includes("/edit-user") &&
+            <button
+              type="button"
+              className="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+              onClick={editUserClicked}
+            >
+              <Icon icon="lucide:edit" className="menu-icon" />
+            </button>
+          }
+         {
+           permissions?.includes("/delete-user") &&
+            <button
+                type="button"
+                className="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                onClick={() => openDeletePopup(data?.id)}
+              >
+                <Icon icon="fluent:delete-24-regular" className="menu-icon" />
+              </button>
+         } 
+          {
+            permissions?.includes("/activate-block-user") && data?.isActive ? <button
             type="button"
             className="bg-warning-focus bg-hover-warning-200 text-warning-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
             onClick={() => openStatusPopup(data?.id, "Block")}

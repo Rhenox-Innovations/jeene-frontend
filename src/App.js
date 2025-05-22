@@ -26,6 +26,10 @@ import ReviewDetailsPage from "./pages/ReviewDetailsPage";
 import RatingParameterListPage from "./pages/RatingParameterListPage";
 import AddRatingParameterPage from "./pages/AddRatingParameterPage";
 import EditRatingParameterPage from "./pages/EditRatingParameterPage";
+import AddRolePage from "./pages/AddRolePage";
+import RoleListPage from "./pages/RoleListPage";
+import EditRolePage from "./pages/EditRolePage";
+import { PrivateRoutes } from "./components/PrivateRoute";
 
 function App() {
   return (
@@ -34,189 +38,76 @@ function App() {
         <RouteScrollToTop />
         <Routes>
           <Route exact path="/" element={<SignInPage />} />
-          <Route
-            exact
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <HomePageSix />
-              </ProtectedRoute>
-            }
-          />
           <Route exact path="/sign-in" element={<SignInPage />} />
-          <Route
-            exact
-            path="/add-user"
-            element={
-              <ProtectedRoute>
-                <AddUserPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            exact
-            path="/assign-role"
-            element={
-              <ProtectedRoute>
-                <AssignRolePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            exact
-            path="/role-access"
-            element={
-              <ProtectedRoute>
-                <RoleAccessPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            exact
-            path="/users-list"
-            element={
-              <ProtectedRoute>
-                <UsersListPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route exact path="/view-details" element={<ViewDetailsPage />} />
-          <Route
-            exact
-            path="/view-profile"
-            element={
-              <ProtectedRoute>
-                <ViewProfilePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            exact
-            path="/view-profile-admin"
-            element={
-              <ProtectedRoute>
-                <ViewProfilePageAdmin />
-              </ProtectedRoute>
-            }
-          />
 
-          <Route
-            exact
-            path="/add-category"
-            element={
-              <ProtectedRoute>
-                <AddCategoryPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            exact
-            path="/edit-category"
-            element={
-              <ProtectedRoute>
-                <EditCategoryPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            exact
-            path="/categories-list"
-            element={
-              <ProtectedRoute>
-                <CategoriesListPage />
-              </ProtectedRoute>
-            }
-          />
+          <Route element={<PrivateRoutes />}>
+            <Route exact path="/dashboard" element={<HomePageSix />} />
+            <Route exact path="/add-user" element={<AddUserPage />} />
+            <Route exact path="/assign-role" element={<AssignRolePage />} />
+            <Route exact path="/role-access" element={<RoleAccessPage />} />
+            <Route exact path="/add-role" element={<AddRolePage />} />
+            <Route exact path="/edit-role" element={<EditRolePage />} />
+            <Route exact path="/roles-list" element={<RoleListPage />} />
+            <Route exact path="/users-list" element={<UsersListPage />} />
 
-          <Route
-            exact
-            path="/add-sub-category"
-            element={
-              <ProtectedRoute>
-                <AddSubCategoryPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            exact
-            path="/edit-sub-category"
-            element={
-              <ProtectedRoute>
-                <EditSubCategoryPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            exact
-            path="/sub-categories-list"
-            element={
-              <ProtectedRoute>
-                <SubCategoriesListPage />
-              </ProtectedRoute>
-            }
-          />
+            <Route exact path="/view-details" element={<ViewDetailsPage />} />
+            <Route exact path="/view-profile" element={<ViewProfilePage />} />
+            <Route
+              exact
+              path="/view-profile-admin"
+              element={<ViewProfilePageAdmin />}
+            />
 
-          <Route
-            exact
-            path="/rating-parameter-list"
-            element={
-              <ProtectedRoute>
-                <RatingParameterListPage />
-              </ProtectedRoute>
-            }
-          />
+            <Route exact path="/add-category" element={<AddCategoryPage />} />
+            <Route exact path="/edit-category" element={<EditCategoryPage />} />
+            <Route
+              exact
+              path="/categories-list"
+              element={<CategoriesListPage />}
+            />
 
-          <Route
-            exact
-            path="/add-rating-parameter"
-            element={
-              <ProtectedRoute>
-                <AddRatingParameterPage />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              exact
+              path="/add-sub-category"
+              element={<AddSubCategoryPage />}
+            />
+            <Route
+              exact
+              path="/edit-sub-category"
+              element={<EditSubCategoryPage />}
+            />
+            <Route
+              exact
+              path="/sub-categories-list"
+              element={<SubCategoriesListPage />}
+            />
 
-          <Route
-            exact
-            path="/edit-rating-parameter"
-            element={
-              <ProtectedRoute>
-                <EditRatingParameterPage />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              exact
+              path="/rating-parameter-list"
+              element={<RatingParameterListPage />}
+            />
 
-          <Route
-            exact
-            path="/reviews-list"
-            element={
-              <ProtectedRoute>
-                <ReviewsListPage />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              exact
+              path="/add-rating-parameter"
+              element={<AddRatingParameterPage />}
+            />
 
-          <Route
-            exact
-            path="/review-details"
-            element={
-              <ProtectedRoute>
-                <ReviewDetailsPage />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              exact
+              path="/edit-rating-parameter"
+              element={<EditRatingParameterPage />}
+            />
 
-          <Route
-            exact
-            path="/terms-condition"
-            element={<TermsConditionPage />}
-          />
+            <Route exact path="/reviews-list" element={<ReviewsListPage />} />
 
-          <Route
-            exact
-            path="/image-generator"
-            element={<ImageGeneratorPage />}
-          />
+            <Route
+              exact
+              path="/review-details"
+              element={<ReviewDetailsPage />}
+            />
+          </Route>
 
           <Route exact path="*" element={<ErrorPage />} />
         </Routes>

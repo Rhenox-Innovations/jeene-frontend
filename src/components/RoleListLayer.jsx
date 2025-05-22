@@ -8,9 +8,9 @@ import Paginator from "./child/Paginator";
 import { Button, Modal } from "react-bootstrap";
 import { useSelector } from "react-redux";
 
-const CategoriesListLayer = () => {
-  const [categoriesList, setCategoriesList] = useState([]);
-  const [categoriesListOld, setCategoriesListOld] = useState([]);
+const RoleListLayer = () => {
+  const [roleList, setRoleList] = useState([]);
+  const [roleListOld, setRoleListOld] = useState([]);
   const [loading, setLoading] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,32 +24,32 @@ const CategoriesListLayer = () => {
 
   const loadData = async () => {
     setLoading(true);
-    const response = await apiRequest.get(Endpoints.GET_CATEGORIES);
-    setLoading(false);
+    let response = await apiRequest.get(Endpoints.GET_ROLES);
     if (response && response.data) {
-      setCategoriesList(response.data.data);
-      setCategoriesListOld(response.data.data)
+      setRoleList(response.data.data);
+      setRoleListOld(response.data.data)
     }
+
+    setLoading(false);
   };
 
   const onSearchValueChange = (evt) => {
     let value = evt.target.value.toLowerCase();
-    if (value && categoriesListOld?.length > 0) {
-      let filtered = categoriesListOld?.filter(
+    if (value && roleListOld?.length > 0) {
+      let filtered = roleListOld?.filter(
         (x) =>
-          x.name.toLowerCase().includes(value) ||
-          x.description.toLowerCase().includes(value)
+          x.Name.toLowerCase().includes(value)
       );
-      setCategoriesList(filtered);
+      setRoleList(filtered);
     } else {
-      setCategoriesList(categoriesListOld);
+      setRoleList(roleListOld);
     }
   };
 
   const getCurrentPageData = () => {
     const startIndex = (currentPage - 1) * pageSize;
-    const endIndex = Math.min(startIndex + pageSize, categoriesList?.length);
-    return categoriesList?.slice(startIndex, endIndex);
+    const endIndex = Math.min(startIndex + pageSize, roleList?.length);
+    return roleList?.slice(startIndex, endIndex);
   };
 
   const openDeletePopup = (userId) => {
@@ -64,20 +64,21 @@ const CategoriesListLayer = () => {
 
   const handleConfirm = async () => {
     setPopupLoading(true)
-    const result = await apiRequest.post(Endpoints.DELETE_CATEGORIES, {categoryId: selectedId});
+    const result = await apiRequest.delete(Endpoints.DELETE_ROLE + "/" + selectedId);
     setPopupLoading(false)
     if(result?.data?.success){
-      deleteFromUserData(selectedId)
+        deleteFromData(selectedId)
     }
     setShowPopup(false)
   }
 
-  const deleteFromUserData = (id) => {
-    const filteredOld = categoriesListOld.filter((i) => i?.id !== id);
-    setCategoriesListOld(filteredOld)
-    const filtered = categoriesList.filter((i) => i?.id !== id);
-    setCategoriesList(filtered)
+  const deleteFromData = (id) => {
+    const filteredOld = roleListOld.filter((i) => i?.id !== id);
+    setRoleListOld(filteredOld)
+    const filtered = roleList.filter((i) => i?.id !== id);
+    setRoleList(filtered)
   }
+
   return (
     <>
     <Modal
@@ -90,7 +91,7 @@ const CategoriesListLayer = () => {
           <Modal.Title>Confirmation</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Are you sure you want to delete this category?
+          Are you sure you want to delete this role?
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
@@ -135,25 +136,16 @@ const CategoriesListLayer = () => {
             />
             <Icon icon="ion:search-outline" className="icon" />
           </form>
-          {/* <select
-            className="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px"
-            onChange={onStatusChange}
-            defaultValue="Select Status"
-          >
-            <option value="Select Status">Select Status</option>
-            <option value="Active">Active</option>
-            <option value="Blocked">Blocked</option>
-          </select> */} 
         </div>
         <Link
-          to="/add-category"
+          to="/add-role"
           className="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2"
         >
           <Icon
             icon="ic:baseline-plus"
             className="icon text-xl line-height-1"
           />
-          Add New Category
+          Add New Role
         </Link>
       </div>
       <div className="card-body p-24">
@@ -176,14 +168,12 @@ const CategoriesListLayer = () => {
               <table className="table bordered-table sm-table mb-0">
                 <thead>
                   <tr key={-1}>
-                    {/* <th scope="col">
+                    <th scope="col">
                       <div className="d-flex align-items-center gap-10">
                         S.no
                       </div>
-                    </th> */}
+                    </th>
                     <th scope="col">Name</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Show on dashboard</th>
                     <th scope="col" className="text-center">
                       Action
                     </th>
@@ -196,7 +186,7 @@ const CategoriesListLayer = () => {
                 </tbody>
               </table>
               <Paginator
-                totalRows={categoriesList?.length}
+                totalRows={roleList?.length}
                 pageSize={pageSize}
                 onPageChange={(currentPage) => {
                   setCurrentPage(currentPage);
@@ -217,55 +207,51 @@ const CategoryRow = ({data, index, openDeletePopup}) => {
  const permissions = useSelector(state => state?.auth?.permissions)
 
   const editUserClicked = () => {
-    navigate("/edit-category", {state :  data})
+    var permissions = data.permissions.map((x) => x.componentName)
+    data.permissions = permissions;
+    navigate("/edit-role", {state:  data})
   }
 
+  
   return (
     <tr key={index}>
-      {/* <td>
+      <td>
         <div className="d-flex align-items-center gap-10">{index + 1}</div>
-      </td> */}
+      </td>
       <td>
         <span className="text-md mb-0 fw-normal text-secondary-light">
           {data?.name}
         </span>
       </td>
-      <td>
-        <span className="text-md mb-0 fw-normal text-secondary-light">
-          {data?.description}
-        </span>
-      </td>
-      <td>
-        <span className="text-md mb-0 fw-normal text-secondary-light">
-          {data?.showOnDashboard ? "Yes" : "No"}
-        </span>
-      </td>
     
       <td className="text-center">
         <div className="d-flex align-items-center gap-10 justify-content-center">
-          {
-            permissions?.includes("/edit-category") && <button
+          
+          {/* <button
+            type="button"
+            className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+            onClick={viewUserClicked}
+          >
+            <Icon icon="majesticons:eye-line" className="icon text-xl" />
+          </button> */}
+          {permissions?.includes("/edit-role") && <button
             type="button"
             className="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
             onClick={editUserClicked}
-            >
-              <Icon icon="lucide:edit" className="menu-icon" />
-            </button>
-          }
-          {
-            permissions?.includes("/delete-category") &&
-            <button
-              type="button"
-              className="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
-              onClick={() => openDeletePopup(data?.id)}
-            >
-              <Icon icon="fluent:delete-24-regular" className="menu-icon" />
-            </button>
-          }
+          >
+            <Icon icon="lucide:edit" className="menu-icon" />
+          </button>}
+          {permissions?.includes("/delete-role") &&<button
+            type="button"
+            className="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+            onClick={() => openDeletePopup(data?.id)}
+          >
+            <Icon icon="fluent:delete-24-regular" className="menu-icon" />
+          </button>}
         </div>
       </td>
     </tr>
   );
 };
 
-export default CategoriesListLayer;
+export default RoleListLayer;

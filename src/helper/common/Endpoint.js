@@ -1,6 +1,6 @@
 const Endpoints = {
-  BASE_URL: "https://jeeneapi.rhenoxinnovations.com/api",
-  //BASE_URL: "https://localhost:44348/api",
+  //BASE_URL: "https://jeeneapi.rhenoxinnovations.com/api",
+  BASE_URL: "https://localhost:44348/api",
 
   //Authentication
   SIGN_IN: "/Authentication/Login",
@@ -31,6 +31,11 @@ const Endpoints = {
 
   //Roles
   GET_ROLES: "/Role/GetAll",
+  GET_ROLE_BY_ID: "/Role",
+  GET_ROLE_PERMISSIONS: "/Role/GetRolePermissions",
+  CREATE_ROLE: "/Role/Create",
+  UPDATE_ROLE: "/Role/Edit",
+  DELETE_ROLE: "/Role/Delete",
 
   //File Upload
   UPLOAD_FILE: "/File/Upload",

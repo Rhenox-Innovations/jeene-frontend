@@ -5,6 +5,7 @@ const authSlice = createSlice({
   initialState: {
     user: JSON.parse(localStorage.getItem("user")) || null,
     isAuthenticated: !!localStorage.getItem("user"),
+    permissions: null,
   },
   reducers: {
     login: (state, action) => {
@@ -17,6 +18,9 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       localStorage.removeItem("user");
     },
+    setPermissions: (state, action) => {
+      state.permissions = action.payload
+    },
     updateUserData: (state, action) => {
       state.user = { ...state.user, userData: action.payload };
       localStorage.removeItem('user');
@@ -25,5 +29,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { login, logout, updateUserData } = authSlice.actions;
+export const { login, logout, updateUserData, setPermissions } = authSlice.actions;
 export default authSlice.reducer;

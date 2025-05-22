@@ -11,6 +11,7 @@ import { useLocation } from "react-router-dom";
 
 const ViewProfileLayer = ({ page }) => {
   const { state } = useLocation();
+  const permissions = useSelector((state) => state?.auth?.permissions);
   const { userData } = useSelector((state) => state.auth.user);
   const [imagePreview, setImagePreview] = useState(userData?.profilePicture);
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -42,6 +43,7 @@ const ViewProfileLayer = ({ page }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    debugger
     checkUserProfile();
     getRoles();
     getInterests();
@@ -361,7 +363,7 @@ const ViewProfileLayer = ({ page }) => {
           </div>
         </div>
       </div>
-      <div className="col-lg-8">
+      { !state?.userId || permissions?.includes("/edit-user") &&  <div className="col-lg-8">
         
         {!pageLoading && (
           <div className="card h-100">
@@ -392,6 +394,8 @@ const ViewProfileLayer = ({ page }) => {
                 id="pills-tab"
                 role="tablist"
               >
+               
+                
                 <li className="nav-item" role="presentation">
                   <button
                     className="nav-link d-flex align-items-center px-24 active"
@@ -406,6 +410,7 @@ const ViewProfileLayer = ({ page }) => {
                     Edit Profile
                   </button>
                 </li>
+                
                 <li className="nav-item" role="presentation">
                   <button
                     className="nav-link d-flex align-items-center px-24"
@@ -746,7 +751,8 @@ const ViewProfileLayer = ({ page }) => {
             </div>
           </div>
         )}
-      </div>
+        </div>
+      }
     </div>
   );
 };

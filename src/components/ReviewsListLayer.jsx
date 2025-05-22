@@ -7,6 +7,7 @@ import { ThreeDots } from "react-loader-spinner";
 import Paginator from "./child/Paginator";
 import { Button, Modal } from "react-bootstrap";
 import { ReviewStatus } from "../helper/common/Enum";
+import { useSelector } from "react-redux";
 
 const ReviewsListLayer = () => {
   const [reviewList, setReviewList] = useState([]);
@@ -318,6 +319,7 @@ const ReviewsListLayer = () => {
 
 const ReviewRow = ({ data, index, openDeletePopup, openStatusPopup }) => {
   const navigate = useNavigate();
+  const permissions = useSelector(state => state?.auth?.permissions)
 
   const viewReviewClicked = () => {
     navigate("/review-details", { state: data });
@@ -376,21 +378,26 @@ const ReviewRow = ({ data, index, openDeletePopup, openStatusPopup }) => {
       </td>
       <td className="text-left">
         <div className="d-flex align-items-center gap-10 justify-content-start">
-          <button
-            type="button"
-            className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
-            onClick={viewReviewClicked}
-          >
-            <Icon icon="majesticons:eye-line" className="icon text-xl" />
-          </button>
-          <button
+          {
+            permissions?.includes("/review-details") &&
+            <button
+              type="button"
+              className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+              onClick={viewReviewClicked}
+            >
+              <Icon icon="majesticons:eye-line" className="icon text-xl" />
+            </button>
+          }
+          { permissions?.includes("/delete-review") &&
+            <button
             type="button"
             className="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
             onClick={() => openDeletePopup(data?.id)}
-          >
-            <Icon icon="fluent:delete-24-regular" className="menu-icon" />
-          </button>
-          {data?.status == ReviewStatus.Pending ? (
+            >
+              <Icon icon="fluent:delete-24-regular" className="menu-icon" />
+            </button>
+          }
+          {permissions?.includes("/approve-reject-review") && (data?.status == ReviewStatus.Pending ? (
             <>
               <button
                 type="button"
@@ -429,7 +436,7 @@ const ReviewRow = ({ data, index, openDeletePopup, openStatusPopup }) => {
             >
               <Icon icon="fa6-solid:check" className="menu-icon" />
             </button>
-          )}
+          ))}
         </div>
       </td>
     </tr>

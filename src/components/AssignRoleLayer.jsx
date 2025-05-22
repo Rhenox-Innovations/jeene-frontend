@@ -14,6 +14,7 @@ const AssignRoleLayer = () => {
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [showSuccess, setShowSuccess] = useState();
+  const [roleList, setRoleList] = useState([]);
   
   useEffect(() => {
     getUserData();
@@ -21,12 +22,18 @@ const AssignRoleLayer = () => {
 
   const getUserData = async () => {
     setLoading(true);
-    const response = await apiRequest.get(Endpoints.GET_ALL_USER_DETAILS);
-    setLoading(false);
-    if (response && response.data) {
+    let response = await apiRequest.get(Endpoints.GET_ALL_USER_DETAILS);
+   
+    if (response?.data) {
       setUserList(response.data.data);
       setUserListOld(response.data.data);
     }
+    response = await apiRequest.get(Endpoints.GET_ROLES);
+    if(response?.data){
+      setRoleList(response.data.data);
+    }
+    setLoading(false);
+  
   };
 
   const getCurrentPageData = () => {
@@ -89,7 +96,8 @@ const AssignRoleLayer = () => {
                         <option value="10">10</option>
                         <option value="20">20</option>
                         <option value="50">50</option>
-
+                        <option value="100">100</option>
+                        <option value="1000">1000</option>
                     </select>
           <form className="navbar-search">
           <input
@@ -157,7 +165,7 @@ const AssignRoleLayer = () => {
             </thead>
             <tbody>
             {getCurrentPageData()?.map((data, index) =>
-                    <AssignRoleRow key={index} data={data} index={index} showSuccessMessage={showSuccessMessage} updateUserData={updateUserData}/>
+                    <AssignRoleRow key={index} data={data} index={index} showSuccessMessage={showSuccessMessage} updateUserData={updateUserData} roleList={roleList}/>
                   )}
             </tbody>
           </table>
@@ -177,7 +185,7 @@ const AssignRoleLayer = () => {
   );
 };
 
-const AssignRoleRow = ({data, index, showSuccessMessage, updateUserData }) => {
+const AssignRoleRow = ({data, index, showSuccessMessage, updateUserData, roleList }) => {
 
     const [loading, setLoading] = useState(false)
  
@@ -259,30 +267,18 @@ const AssignRoleRow = ({data, index, showSuccessMessage, updateUserData }) => {
                       Assign Role
                     </button>
                     <ul className="dropdown-menu" style={{}}>
-                      <li>
-                        <Link
-                          className="dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900"
-                          onClick={() => assignRole(UserRole.USER)}
-                        >
-                          {UserRole.USER}
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          className="dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900"
-                          onClick={() => assignRole(UserRole.MODERATOR)}
-                        >
-                          {UserRole.MODERATOR}
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          className="dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900"
-                          onClick={() => assignRole(UserRole.ADMIN)}
-                        >
-                          {UserRole.ADMIN}
-                        </Link>
-                      </li>
+                      {
+                        roleList?.map((role) => 
+                          <li>
+                            <Link
+                              className="dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900"
+                              onClick={() => assignRole(role.roleName)}
+                            >
+                              {role.roleName}
+                            </Link>
+                          </li>
+                        )
+                      }
                     </ul>
                   </div>
       </td>
