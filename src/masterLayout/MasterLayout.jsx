@@ -12,19 +12,18 @@ import { Endpoints } from "../helper/common/Endpoint";
 const MasterLayout = ({ children }) => {
   let [sidebarActive, seSidebarActive] = useState(false);
   let [mobileMenu, setMobileMenu] = useState(false);
-
   const location = useLocation(); // Hook to get the current route
   const user = useSelector(state => state?.auth?.user?.userData);
   const permissions = useSelector(state => state?.auth?.permissions);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   
-  useEffect(() => {
+  useEffect(()=>{
     loadPermissions()
-  },[])
+  }, [])
 
   useEffect(() => {
-     
+    loadPermissions()
     // Function to handle dropdown clicks
     const handleDropdownClick = (event) => {
       event.preventDefault();
@@ -82,7 +81,7 @@ const MasterLayout = ({ children }) => {
       });
     };
   }, [location.pathname]);
-
+  
   let sidebarControl = () => {
     seSidebarActive(!sidebarActive);
   };
@@ -100,6 +99,7 @@ const MasterLayout = ({ children }) => {
     var sideBarElements = [SIDE_BAR_CONFIG.filter(i => i.main)[0]]
     SIDE_BAR_CONFIG.forEach(element => {
       if(!element.main && element.children.some(i => permissions?.includes(i.path))){
+        element.children = element.children.filter(x => permissions?.includes(x.path))
         sideBarElements.push(element);
       }
     });

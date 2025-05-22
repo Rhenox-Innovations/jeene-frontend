@@ -324,15 +324,7 @@ const UserRow = ({data, index, openDeletePopup, openStatusPopup}) => {
               {data?.fullName}
             </span>
             <div>
-            {
-              data?.roles?.[0] === 'User' ? <span className="badge text-xsm fw-semibold rounded-pill bg-light-600 px-20 py-4 radius-4 text-dark">
-                User
-              </span>  :  data?.roles?.[0] === 'Admin' ? <span className="badge text-xsm fw-semibold rounded-pill bg-neutral-600 px-20 py-4 radius-4 text-base">
-                Admin
-              </span> : data?.roles?.[0] === 'Moderator' ? <span className="badge text-xsm fw-semibold rounded-pill bg-primary-400 px-20 py-4 radius-4 text-white">
-                Moderator
-              </span> : <></>
-            }
+            <span className="badge text-xsm fw-semibold rounded-pill bg-light-600 px-20 py-4 radius-4 text-dark">{data?.roles?.[0]}</span>
             </div>
           </div>
         </div>

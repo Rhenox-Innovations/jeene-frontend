@@ -16,13 +16,14 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.isAuthenticated = false;
+      state.permissions = null;
       localStorage.removeItem("user");
     },
     setPermissions: (state, action) => {
       state.permissions = action.payload
     },
     updateUserData: (state, action) => {
-      state.user = { ...state.user, userData: action.payload };
+      state.user = { ...state, ...state.user, userData: action.payload };
       localStorage.removeItem('user');
       localStorage.setItem("user", JSON.stringify(state.user));
     },

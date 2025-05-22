@@ -29,6 +29,7 @@ const AssignRoleLayer = () => {
       setUserListOld(response.data.data);
     }
     response = await apiRequest.get(Endpoints.GET_ROLES);
+    debugger
     if(response?.data){
       setRoleList(response.data.data);
     }
@@ -272,9 +273,9 @@ const AssignRoleRow = ({data, index, showSuccessMessage, updateUserData, roleLis
                           <li>
                             <Link
                               className="dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900"
-                              onClick={() => assignRole(role.roleName)}
+                              onClick={() => assignRole(role.name)}
                             >
-                              {role.roleName}
+                              {role.name}
                             </Link>
                           </li>
                         )
