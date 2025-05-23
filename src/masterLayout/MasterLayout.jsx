@@ -12,76 +12,12 @@ import { Endpoints } from "../helper/common/Endpoint";
 const MasterLayout = ({ children }) => {
   let [sidebarActive, seSidebarActive] = useState(false);
   let [mobileMenu, setMobileMenu] = useState(false);
-  const location = useLocation(); // Hook to get the current route
+   // Hook to get the current route
   const user = useSelector(state => state?.auth?.user?.userData);
   const permissions = useSelector(state => state?.auth?.permissions);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
-  useEffect(()=>{
-    loadPermissions()
-  }, [])
 
-  useEffect(() => {
-    loadPermissions()
-    // Function to handle dropdown clicks
-    const handleDropdownClick = (event) => {
-      event.preventDefault();
-      const clickedLink = event.currentTarget;
-      const clickedDropdown = clickedLink.closest(".dropdown");
-
-      if (!clickedDropdown) return;
-
-      const isActive = clickedDropdown.classList.contains("open");
-
-      // Close all dropdowns
-      const allDropdowns = document.querySelectorAll(".sidebar-menu .dropdown");
-      allDropdowns.forEach((dropdown) => {
-        dropdown.classList.remove("open");
-      });
-
-      // Toggle the clicked dropdown
-      if (!isActive) {
-        clickedDropdown.classList.add("open");
-      }
-    };
-
-    // Attach click event listeners to all dropdown triggers
-    const dropdownTriggers = document.querySelectorAll(
-      ".sidebar-menu .dropdown > a, .sidebar-menu .dropdown > Link"
-    );
-
-    dropdownTriggers.forEach((trigger) => {
-      trigger.addEventListener("click", handleDropdownClick);
-    });
-
-    // Function to open submenu based on current route
-    const openActiveDropdown = () => {
-      const allDropdowns = document.querySelectorAll(".sidebar-menu .dropdown");
-      allDropdowns.forEach((dropdown) => {
-        const submenuLinks = dropdown.querySelectorAll(".sidebar-submenu li a");
-        submenuLinks.forEach((link) => {
-          if (
-            link.getAttribute("href") === location.pathname ||
-            link.getAttribute("to") === location.pathname
-          ) {
-            dropdown.classList.add("open");
-          }
-        });
-      });
-    };
-
-    // Open the submenu that contains the open route
-    openActiveDropdown();
-
-    // Cleanup event listeners on unmount
-    return () => {
-      dropdownTriggers.forEach((trigger) => {
-        trigger.removeEventListener("click", handleDropdownClick);
-      });
-    };
-  }, [location.pathname]);
-  
   let sidebarControl = () => {
     seSidebarActive(!sidebarActive);
   };
@@ -95,109 +31,20 @@ const MasterLayout = ({ children }) => {
     navigate('/sign-in');
   }
 
-  const getSideBarList = () => {
-    var sideBarElements = [SIDE_BAR_CONFIG.filter(i => i.main)[0]]
-    SIDE_BAR_CONFIG.forEach(element => {
-      if(!element.main && element.children.some(i => permissions?.includes(i.path))){
-        element.children = element.children.filter(x => permissions?.includes(x.path))
-        sideBarElements.push(element);
-      }
-    });
-    return sideBarElements;
-  }
   const loadPermissions = async () => {
-    let result = await apiRequest.get(Endpoints.GET_ROLE_PERMISSIONS + "/" + user?.roles[0])
-    if(result?.data){
-       dispatch(setPermissions(result?.data?.data))
+    if(!permissions){
+      let result = await apiRequest.get(Endpoints.GET_ROLE_PERMISSIONS + "/" + user?.roles[0])
+      if(result?.data){
+         dispatch(setPermissions(result?.data?.data))
+      }
     }
   }
+
+ 
+
   return (
     <section className={mobileMenu ? "overlay active" : "overlay "}>
-      {/* sidebar */}
-      <aside
-        className={
-          sidebarActive
-            ? "sidebar active "
-            : mobileMenu
-            ? "sidebar sidebar-open"
-            : "sidebar"
-        }
-      >
-        <button
-          onClick={mobileMenuControl}
-          type="button"
-          className="sidebar-close-btn"
-        >
-          <Icon icon="radix-icons:cross-2" />
-        </button>
-        <div>
-          <Link to="/" className="sidebar-logo">
-            <img
-              src="assets/images/logo.png"
-              alt="site logo"
-              className="light-logo"
-            />
-            <img
-              src="assets/images/logo-light.png"
-              alt="site logo"
-              className="dark-logo"
-            />
-            <img
-              src="assets/images/logo-icon.png"
-              alt="site logo"
-              className="logo-icon"
-            />
-          </Link>
-        </div>
-        <div className="sidebar-menu-area">
-          <ul className="sidebar-menu" id="sidebar-menu">
-            {
-              getSideBarList()?.map((item, index) => {
-                return item.children && item.children.length > 0  ? 
-                  <li className="dropdown" key={index}>
-                    <Link to={item.path}>
-                      <Icon
-                        icon={item.icon}
-                        className="menu-icon"
-                      />
-                      <span>{item.title}</span>
-                    </Link>
-                    <ul className="sidebar-submenu">
-                      {
-                        item.children.map((child, index) => !child.hide &&
-                        <li>
-                          <NavLink
-                            to={child.path}
-                            className={(navData) =>
-                              navData.isActive ? "active-page" : ""
-                            }
-                          >
-                            <i className={"ri-circle-fill circle-icon w-auto " + ["text-primary-600", "text-success-600", "text-warning-600", "text-danger-600"][index]} />{" "}
-                            {child.title}
-                          </NavLink>
-                        </li>)
-                      }
-                    
-                    </ul>
-                  </li>
-                 : 
-                  <li>
-                    <NavLink
-                      to={item.path}
-                      className={(navData) =>
-                        navData.isActive ? "active-page" : ""
-                      }
-                    >
-                      <Icon icon={item.icon} className="menu-icon" />
-                      <span>{item.title}</span>
-                    </NavLink>
-                  </li>
-              })
-            }
-          </ul>
-        </div>
-      </aside>
-
+      <SideBar sidebarActive={sidebarActive} mobileMenu={mobileMenu} mobileMenuControl={mobileMenuControl} permissions={permissions} loadPermissions={loadPermissions} />
       <main
         className={sidebarActive ? "dashboard-main active" : "dashboard-main"}
       >
@@ -490,5 +337,173 @@ const MasterLayout = ({ children }) => {
     </section>
   );
 };
+
+const SideBar = ({sidebarActive, mobileMenu, mobileMenuControl, permissions, loadPermissions}) => {
+  const location = useLocation();
+  useEffect(() => {
+    loadPermissions()
+    // Function to handle dropdown clicks
+    const dropdownTriggers = addTriggersOnDropdowns()
+
+    // Cleanup event listeners on unmount
+    return () => {
+      dropdownTriggers.forEach((trigger) => {
+        trigger.removeEventListener("click", handleDropdownClick);
+      });
+    };
+  }, [location.pathname]);
+  
+  const handleDropdownClick = (event) => {
+    event.preventDefault();
+    const clickedLink = event.currentTarget;
+    const clickedDropdown = clickedLink.closest(".dropdown");
+
+    if (!clickedDropdown) return;
+
+    const isActive = clickedDropdown.classList.contains("open");
+
+    // Close all dropdowns
+    const allDropdowns = document.querySelectorAll(".sidebar-menu .dropdown");
+    allDropdowns.forEach((dropdown) => {
+      dropdown.classList.remove("open");
+    });
+
+    // Toggle the clicked dropdown
+    if (!isActive) {
+      clickedDropdown.classList.add("open");
+    }
+  };
+
+  const addTriggersOnDropdowns = () => {
+    
+
+    // Attach click event listeners to all dropdown triggers
+    const dropdownTriggers = document.querySelectorAll(
+      ".sidebar-menu .dropdown > a, .sidebar-menu .dropdown > Link"
+    );
+
+    dropdownTriggers.forEach((trigger) => {
+      trigger.addEventListener("click", handleDropdownClick);
+    });
+
+    // Function to open submenu based on current route
+    const openActiveDropdown = () => {
+      const allDropdowns = document.querySelectorAll(".sidebar-menu .dropdown");
+      allDropdowns.forEach((dropdown) => {
+        const submenuLinks = dropdown.querySelectorAll(".sidebar-submenu li a");
+        submenuLinks.forEach((link) => {
+          if (
+            link.getAttribute("href") === location.pathname ||
+            link.getAttribute("to") === location.pathname
+          ) {
+            dropdown.classList.add("open");
+          }
+        });
+      });
+    };
+
+    // Open the submenu that contains the open route
+    openActiveDropdown();
+    return dropdownTriggers;
+  }
+
+  const getSideBarList = (permissions) => {
+    const sideBarElements = [SIDE_BAR_CONFIG.filter(i => i.main)[0]]
+    if(permissions){
+      SIDE_BAR_CONFIG.forEach(element => {
+        if(!element.main && element.children.some(i => permissions.includes(i.path))){
+          element.children = element.children.filter(x => permissions.includes(x.path))
+          sideBarElements.push(element);
+        }
+      });
+    }
+    addTriggersOnDropdowns();
+    return sideBarElements;
+  }
+
+  return <aside
+    className={
+      sidebarActive
+        ? "sidebar active "
+        : mobileMenu
+        ? "sidebar sidebar-open"
+        : "sidebar"
+    }
+  >
+    <button
+      onClick={mobileMenuControl}
+      type="button"
+      className="sidebar-close-btn"
+    >
+      <Icon icon="radix-icons:cross-2" />
+    </button>
+    <div>
+      <Link to="/" className="sidebar-logo">
+        <img
+          src="assets/images/logo.png"
+          alt="site logo"
+          className="light-logo"
+        />
+        <img
+          src="assets/images/logo-light.png"
+          alt="site logo"
+          className="dark-logo"
+        />
+        <img
+          src="assets/images/logo-icon.png"
+          alt="site logo"
+          className="logo-icon"
+        />
+      </Link>
+    </div>
+    <div className="sidebar-menu-area">
+      <ul className="sidebar-menu" id="sidebar-menu">
+        {
+          getSideBarList(permissions)?.map((item, index) => {
+            return item.children && item.children.length > 0  ? 
+              <li className="dropdown" key={index}>
+                <NavLink>
+                  <Icon
+                    icon={item.icon}
+                    className="menu-icon"
+                  />
+                  <span>{item.title}</span>
+                </NavLink>
+                <ul className="sidebar-submenu">
+                  {console.log("item children: ", item.children) ||
+                    item.children.map((child, index) => !child.hide &&
+                    <li>
+                      <NavLink
+                        to={child.path}
+                        className={(navData) =>
+                          navData.isActive ? "active-page" : ""
+                        }
+                      >
+                        <i className={"ri-circle-fill circle-icon w-auto " + ["text-primary-600", "text-success-600", "text-warning-600", "text-danger-600"][index]} />{" "}
+                        {child.title}
+                      </NavLink>
+                    </li>)
+                  }
+                
+                </ul>
+              </li>
+             : 
+              <li key={index}>
+                <NavLink
+                  to={item.path}
+                  className={(navData) =>
+                    navData.isActive ? "active-page" : ""
+                  }
+                >
+                  <Icon icon={item.icon} className="menu-icon" />
+                  <span>{item.title}</span>
+                </NavLink>
+              </li>
+          })
+        }
+      </ul>
+    </div>
+  </aside>
+}
 
 export default MasterLayout;

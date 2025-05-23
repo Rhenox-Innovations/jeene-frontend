@@ -43,7 +43,6 @@ const ViewProfileLayer = ({ page }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    debugger
     checkUserProfile();
     getRoles();
     getInterests();
