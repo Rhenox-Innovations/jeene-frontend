@@ -3,14 +3,14 @@ import MasterLayout from "../masterLayout/MasterLayout";
 import Breadcrumb from "../components/Breadcrumb";
 import EditRoleLayer from "../components/EditRoleLayer";
 
-const EditCategoryPage = () => {
+const EditRolePage = () => {
   return (
     <>
       {/* MasterLayout */}
       <MasterLayout>
 
         {/* Breadcrumb */}
-        <Breadcrumb title="Edit Category" />
+        <Breadcrumb title="Edit Role" />
 
         <EditRoleLayer />
 
@@ -20,4 +20,4 @@ const EditCategoryPage = () => {
   );
 };
 
-export default EditCategoryPage;
+export default EditRolePage;

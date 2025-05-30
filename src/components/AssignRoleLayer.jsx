@@ -29,7 +29,6 @@ const AssignRoleLayer = () => {
       setUserListOld(response.data.data);
     }
     response = await apiRequest.get(Endpoints.GET_ROLES);
-    debugger
     if(response?.data){
       setRoleList(response.data.data);
     }
