@@ -57,7 +57,8 @@ export const SIDE_BAR_CONFIG =  [
         },
         {
             title: "Edit Role",
-            path: "/edit-role"
+            path: "/edit-role",
+            hide: true
         },
         {
           title: "Assign Role",
@@ -112,7 +113,8 @@ export const SIDE_BAR_CONFIG =  [
         },
         {
           title: "Edit Category",
-          path: "/edit-category"
+          path: "/edit-category",
+          hide: true
         },
         {
             title: "Delete Category",
@@ -136,7 +138,8 @@ export const SIDE_BAR_CONFIG =  [
         },
         {
           title: "Edit Sub-category",
-          path: "/edit-sub-category"
+          path: "/edit-sub-category",
+          hide: true
         },
         {
             title: "Delete Sub-category",
@@ -160,7 +163,8 @@ export const SIDE_BAR_CONFIG =  [
         },
         {
           title: "Edit Rating Parameter",
-          path: "/edit-rating-parameter"
+          path: "/edit-rating-parameter",
+          hide: true
         },
         {
             title: "Delete Rating Parameter",

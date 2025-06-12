@@ -4,7 +4,11 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import ThemeToggleButton from "../helper/ThemeToggleButton";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { logout, setPermissions } from "../redux/actions/authSlice";
+import {
+  logout,
+  setCurrentPath,
+  setPermissions,
+} from "../redux/actions/authSlice";
 import { SIDE_BAR_CONFIG } from "../helper/common/Constants";
 import apiRequest from "../helper/axios";
 import { Endpoints } from "../helper/common/Endpoint";
@@ -12,9 +16,14 @@ import { Endpoints } from "../helper/common/Endpoint";
 const MasterLayout = ({ children }) => {
   let [sidebarActive, seSidebarActive] = useState(false);
   let [mobileMenu, setMobileMenu] = useState(false);
-   // Hook to get the current route
-  const user = useSelector(state => state?.auth?.user?.userData);
-  const permissions = useSelector(state => state?.auth?.permissions);
+  useEffect(() => {
+    loadPermissions();
+  }, []);
+  // Hook to get the current route
+  const user = useSelector((state) => state?.auth?.user?.userData);
+  const permissions = useSelector((state) => state?.auth?.permissions);
+  const currentPathName = useSelector((state) => state?.auth?.currentPath);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -28,23 +37,31 @@ const MasterLayout = ({ children }) => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/sign-in');
-  }
+    navigate("/sign-in");
+  };
 
   const loadPermissions = async () => {
-    if(!permissions){
-      let result = await apiRequest.get(Endpoints.GET_ROLE_PERMISSIONS + "/" + user?.roles[0])
-      if(result?.data){
-         dispatch(setPermissions(result?.data?.data))
+    if (!permissions) {
+      let result = await apiRequest.get(
+        Endpoints.GET_ROLE_PERMISSIONS + "/" + user?.roles[0]
+      );
+      if (result?.data) {
+        dispatch(setPermissions(result?.data?.data));
       }
     }
-  }
-
- 
+  };
 
   return (
     <section className={mobileMenu ? "overlay active" : "overlay "}>
-      <SideBar sidebarActive={sidebarActive} mobileMenu={mobileMenu} mobileMenuControl={mobileMenuControl} permissions={permissions} loadPermissions={loadPermissions} />
+      {permissions && (
+        <SideBar
+          sidebarActive={sidebarActive}
+          mobileMenu={mobileMenu}
+          currentPathName={currentPathName}
+          mobileMenuControl={mobileMenuControl}
+          permissions={permissions}
+        />
+      )}
       <main
         className={sidebarActive ? "dashboard-main active" : "dashboard-main"}
       >
@@ -86,8 +103,7 @@ const MasterLayout = ({ children }) => {
               <div className="d-flex flex-wrap align-items-center gap-3">
                 {/* ThemeToggleButton */}
                 <ThemeToggleButton />
-                
-                
+
                 <div className="dropdown">
                   <button
                     className="has-indicator w-40-px h-40-px bg-neutral-200 rounded-circle d-flex justify-content-center align-items-center"
@@ -245,7 +261,11 @@ const MasterLayout = ({ children }) => {
                     data-bs-toggle="dropdown"
                   >
                     <img
-                      src={user?.profilePicture ? user.profilePicture : '/assets/images/user.png'}
+                      src={
+                        user?.profilePicture
+                          ? user.profilePicture
+                          : "/assets/images/user.png"
+                      }
                       alt="image_user"
                       className="w-40-px h-40-px object-fit-cover rounded-circle"
                     />
@@ -338,21 +358,39 @@ const MasterLayout = ({ children }) => {
   );
 };
 
-const SideBar = ({sidebarActive, mobileMenu, mobileMenuControl, permissions, loadPermissions}) => {
+const SideBar = ({
+  sidebarActive,
+  mobileMenu,
+  currentPathName,
+  mobileMenuControl,
+  permissions,
+}) => {
   const location = useLocation();
-  useEffect(() => {
-    loadPermissions()
-    // Function to handle dropdown clicks
-    const dropdownTriggers = addTriggersOnDropdowns()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
+  const [sidebarElements, setSideBarElements] = useState([]);
+  useEffect(() => {
+    getSideBarList(permissions)
+  }, [])
+
+  useEffect(() => {
+     const isFirstLoad = sessionStorage.getItem('hasVisited');
+    // Function to handle dropdown clicks
+    const dropdownTriggers = addTriggersOnDropdowns();
+    if(isFirstLoad && sidebarElements?.length > 0 && currentPathName){
+      console.log(currentPathName)
+      navigate(currentPathName)
+      dispatch(setCurrentPath(null))
+    }
     // Cleanup event listeners on unmount
     return () => {
       dropdownTriggers.forEach((trigger) => {
         trigger.removeEventListener("click", handleDropdownClick);
       });
     };
-  }, [location.pathname]);
-  
+  }, [location.pathname, sidebarElements]);
+
   const handleDropdownClick = (event) => {
     event.preventDefault();
     const clickedLink = event.currentTarget;
@@ -375,8 +413,6 @@ const SideBar = ({sidebarActive, mobileMenu, mobileMenuControl, permissions, loa
   };
 
   const addTriggersOnDropdowns = () => {
-    
-
     // Attach click event listeners to all dropdown triggers
     const dropdownTriggers = document.querySelectorAll(
       ".sidebar-menu .dropdown > a, .sidebar-menu .dropdown > Link"
@@ -405,105 +441,120 @@ const SideBar = ({sidebarActive, mobileMenu, mobileMenuControl, permissions, loa
     // Open the submenu that contains the open route
     openActiveDropdown();
     return dropdownTriggers;
-  }
+  };
 
-  const getSideBarList = (permissions) => {
-    const sideBarElements = [SIDE_BAR_CONFIG.filter(i => i.main)[0]]
-    if(permissions){
-      SIDE_BAR_CONFIG.forEach(element => {
-        if(!element.main && element.children.some(i => permissions.includes(i.path))){
-          element.children = element.children.filter(x => permissions.includes(x.path))
+  const getSideBarList = async (permissions) => {
+    const sideBarElements = [SIDE_BAR_CONFIG.filter((i) => i.main)[0]];
+    if (permissions) {
+      SIDE_BAR_CONFIG.forEach((element) => {
+        if (
+          !element.main &&
+          element.children.some((i) => permissions.includes(i.path))
+        ) {
+          element.children = element.children.filter((x) =>
+            permissions.includes(x.path)
+          );
           sideBarElements.push(element);
         }
       });
     }
-    addTriggersOnDropdowns();
-    return sideBarElements;
-  }
+    setSideBarElements(sideBarElements);
+  };
 
-  return <aside
-    className={
-      sidebarActive
-        ? "sidebar active "
-        : mobileMenu
-        ? "sidebar sidebar-open"
-        : "sidebar"
-    }
-  >
-    <button
-      onClick={mobileMenuControl}
-      type="button"
-      className="sidebar-close-btn"
+  return (
+    <aside
+      className={
+        sidebarActive
+          ? "sidebar active "
+          : mobileMenu
+          ? "sidebar sidebar-open"
+          : "sidebar"
+      }
     >
-      <Icon icon="radix-icons:cross-2" />
-    </button>
-    <div>
-      <Link to="/" className="sidebar-logo">
-        <img
-          src="assets/images/logo.png"
-          alt="site logo"
-          className="light-logo"
-        />
-        <img
-          src="assets/images/logo-light.png"
-          alt="site logo"
-          className="dark-logo"
-        />
-        <img
-          src="assets/images/logo-icon.png"
-          alt="site logo"
-          className="logo-icon"
-        />
-      </Link>
-    </div>
-    <div className="sidebar-menu-area">
-      <ul className="sidebar-menu" id="sidebar-menu">
-        {
-          getSideBarList(permissions)?.map((item, index) => {
-            return item.children && item.children.length > 0  ? 
+      <button
+        onClick={mobileMenuControl}
+        type="button"
+        className="sidebar-close-btn"
+      >
+        <Icon icon="radix-icons:cross-2" />
+      </button>
+      <div>
+        <Link to="/" className="sidebar-logo">
+          <img
+            src="assets/images/logo.png"
+            alt="site logo"
+            className="light-logo"
+          />
+          <img
+            src="assets/images/logo-light.png"
+            alt="site logo"
+            className="dark-logo"
+          />
+          <img
+            src="assets/images/logo-icon.png"
+            alt="site logo"
+            className="logo-icon"
+          />
+        </Link>
+      </div>
+      <div className="sidebar-menu-area">
+        <ul className="sidebar-menu" id="sidebar-menu">
+          {sidebarElements?.map((item, index) => {
+            return item.children && item.children.length > 0 ? (
               <li className="dropdown" key={index}>
                 <NavLink>
-                  <Icon
-                    icon={item.icon}
-                    className="menu-icon"
-                  />
+                  <Icon icon={item.icon} className="menu-icon" />
                   <span>{item.title}</span>
                 </NavLink>
                 <ul className="sidebar-submenu">
-                  {console.log("item children: ", item.children) ||
-                    item.children.map((child, index) => !child.hide &&
-                    <li>
-                      <NavLink
-                        to={child.path}
-                        className={(navData) =>
-                          navData.isActive ? "active-page" : ""
-                        }
-                      >
-                        <i className={"ri-circle-fill circle-icon w-auto " + ["text-primary-600", "text-success-600", "text-warning-600", "text-danger-600"][index]} />{" "}
-                        {child.title}
-                      </NavLink>
-                    </li>)
-                  }
-                
+                  {item.children.map(
+                    (child, index) =>
+                      !child.hide && (
+                        <li key={index}>
+                          <NavLink
+                            to={child.path}
+                            className={(navData) =>
+                              navData.isActive ? "active-page" : ""
+                            }
+                            onClick={() => dispatch(setCurrentPath(child.path))}
+                          >
+                            <i
+                              className={
+                                "ri-circle-fill circle-icon w-auto " +
+                                [
+                                  "text-primary-600",
+                                  "text-success-600",
+                                  "text-warning-600",
+                                  "text-danger-600",
+                                ][index]
+                              }
+                            />{" "}
+                            {child.title}
+                          </NavLink>
+                        </li>
+                      )
+                  )}
                 </ul>
               </li>
-             : 
+            ) : (
               <li key={index}>
                 <NavLink
                   to={item.path}
                   className={(navData) =>
                     navData.isActive ? "active-page" : ""
                   }
+                  onClick={() => dispatch(setCurrentPath(item.path))}
                 >
                   <Icon icon={item.icon} className="menu-icon" />
                   <span>{item.title}</span>
                 </NavLink>
               </li>
-          })
-        }
-      </ul>
-    </div>
-  </aside>
-}
+            );
+          })}
+        </ul>
+      </div>
+    </aside>
+  );
+};
 
 export default MasterLayout;

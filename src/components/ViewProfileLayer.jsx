@@ -554,8 +554,8 @@ const ViewProfileLayer = ({ page }) => {
                               Select User Role
                             </option>
                             {roleData.map((role, index) => (
-                              <option value={role.roleName} key={index}>
-                                {role.roleName}
+                              <option value={role.name} key={index}>
+                                {role.name}
                               </option>
                             ))}
                           </select>
