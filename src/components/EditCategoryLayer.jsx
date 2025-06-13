@@ -4,6 +4,8 @@ import apiRequest from "../helper/axios";
 import { Endpoints } from "../helper/common/Endpoint";
 import { ThreeDots } from "react-loader-spinner";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { navigatePage } from "../helper/common/Navigation";
 
 const EditCategoryLayer = () => {
   const { state } = useLocation();
@@ -15,8 +17,10 @@ const EditCategoryLayer = () => {
   const [showError, setShowError] = useState();
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   if(!state){
-          navigate("/categories-list")
+      navigatePage(navigate, dispatch, "/categories-list", null)
   }
   const submitHandler = async (e) => {
     e.preventDefault()
@@ -175,7 +179,7 @@ const EditCategoryLayer = () => {
                       className="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8"
                       onClick={cancelHandler}
                     >
-                      Cancel
+                      Reset
                     </button>
                     <button
                       type="submit"

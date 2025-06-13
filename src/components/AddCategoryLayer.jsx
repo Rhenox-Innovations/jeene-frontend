@@ -21,6 +21,7 @@ const AddCategoryLayer = () => {
 
     if(validate()){
         setLoading(true)
+        debugger
         const requestData = {
             name,
             description,
@@ -168,7 +169,7 @@ const AddCategoryLayer = () => {
                       className="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8"
                       onClick={cancelHandler}
                     >
-                      Cancel
+                      Reset
                     </button>
                     <button
                       type="submit"

@@ -21,7 +21,7 @@ const ViewProfileLayer = ({ page }) => {
   const [fullName, setFullName] = useState(userData?.fullName);
   const [email, setEmail] = useState(userData?.email);
   const [role, setRole] = useState(userData?.roles?.[0]);
-  const [bio, setBio] = useState(userData?.fullName);
+  const [bio, setBio] = useState(userData?.bio);
   const [interests, setInterests] = useState(userData?.interests);
   const [roleData, setRoleData] = useState([]);
   const [interestData, setInterestData] = useState([]);
@@ -612,7 +612,7 @@ const ViewProfileLayer = ({ page }) => {
                         className="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8"
                         onClick={handleCancel}
                       >
-                        Cancel
+                        Reset
                       </button>
                       <button
                         type="submit"

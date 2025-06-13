@@ -8,6 +8,8 @@ import Paginator from "./child/Paginator";
 import { Button, Modal } from "react-bootstrap";
 import { ReviewStatus } from "../helper/common/Enum";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { navigatePage } from "../helper/common/Navigation";
 
 const ReviewsListLayer = () => {
   const [reviewList, setReviewList] = useState([]);
@@ -30,8 +32,9 @@ const ReviewsListLayer = () => {
     let response = await apiRequest.get(Endpoints.GET_ALL_REVIEWS);
     setLoading(false);
     if (response && response.data) {
-      setReviewList(response.data.data);
-      setReviewListOld(response.data.data);
+      var reviewData = response.data.data?.sort((a, b) => a.status - b.status)
+      setReviewList(reviewData);
+      setReviewListOld(reviewData);
     }
     
   };
@@ -53,6 +56,7 @@ const ReviewsListLayer = () => {
           x.title.toLowerCase().includes(value) ||
           x.description.toLowerCase().includes(value) ||
           x.user?.fullName.toLowerCase().includes(value) ||
+          x.user?.email.toLowerCase().includes(value) ||
           x.category?.name.toLowerCase().includes(value) ||
           x.subCategory?.name.toLowerCase().includes(value)
       );
@@ -113,7 +117,19 @@ const ReviewsListLayer = () => {
     setPopupLoading(false);
 
     if (result?.data?.success) {
-      loadData();
+      var reviewData = reviewOldList.find(x => x.id == selectedReviewId)
+      if(status ==  ReviewStatus.Rejected){
+        updateData({
+          ...reviewData,
+          status: status,
+          rejectionReason: rejectionReason
+        });
+      }else{
+        updateData({
+          ...reviewData,
+          status: status
+        });
+      }
     }
     setShowStatusPopup();
   };
@@ -122,6 +138,25 @@ const ReviewsListLayer = () => {
     const filteredOld = reviewOldList.filter((i) => i?.id !== id);
     setReviewListOld(filteredOld);
     const filtered = reviewList.filter((i) => i?.id !== id);
+    setReviewList(filtered);
+  };
+
+  const updateData = (newData) => {
+    const filteredOld = reviewOldList.map((i) => {
+      if(newData?.id == i?.id){
+        i.status = newData.status
+        i.rejectionReason = newData.rejectionReason
+      }
+      return i;
+    });
+    setReviewListOld(filteredOld);
+    const filtered = reviewList.filter((i) => {
+      if(newData?.id == i?.id){
+         i.status = newData.status
+        i.rejectionReason = newData.rejectionReason
+      }
+      return i;
+    });
     setReviewList(filtered);
   };
 
@@ -233,7 +268,7 @@ const ReviewsListLayer = () => {
               <option value="100">100</option>
               <option value="1000">1000</option>
             </select>
-            <form className="navbar-search">
+            <form className="navbar-search" onSubmit={(e) => e.preventDefault()}>
               <input
                 type="text"
                 className="bg-base h-40-px w-auto"
@@ -319,10 +354,11 @@ const ReviewsListLayer = () => {
 
 const ReviewRow = ({ data, index, openDeletePopup, openStatusPopup }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const permissions = useSelector(state => state?.auth?.permissions)
 
   const viewReviewClicked = () => {
-    navigate("/review-details", { state: data });
+    navigatePage(navigate, dispatch, "/review-details", { state: data })
   };
 
   const postedDateTime = new Date(data?.postedDateTime);
@@ -359,16 +395,16 @@ const ReviewRow = ({ data, index, openDeletePopup, openStatusPopup }) => {
       </td>
       <td className="text-center">
         {data?.status == ReviewStatus.Approved ? (
-          <span className="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">
+          <span className="bg-success-focus text-success-600  border-success-main px-24 py-4 radius-4 fw-medium text-sm">
             Approved
           </span>
         ) : data?.status == ReviewStatus.Pending ? (
-          <span className="bg-warning-focus text-warning-600 border border-warning-main px-24 py-4 radius-4 fw-medium text-sm">
+          <span className="bg-warning-focus text-warning-600 border-warning-main px-24 py-4 radius-4 fw-medium text-sm">
             Pending
           </span>
         ) : data?.status == ReviewStatus.Rejected ? (
           <span
-            className="bg-danger-focus text-danger-600 border border-danger-main px-24 py-4 radius-4 fw-medium text-sm"
+            className="bg-danger-focus text-danger-600 border-danger-main px-24 py-4 radius-4 fw-medium text-sm"
           >
             Rejected
           </span>
@@ -384,6 +420,7 @@ const ReviewRow = ({ data, index, openDeletePopup, openStatusPopup }) => {
               type="button"
               className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
               onClick={viewReviewClicked}
+              title="View Details"
             >
               <Icon icon="majesticons:eye-line" className="icon text-xl" />
             </button>
@@ -393,6 +430,7 @@ const ReviewRow = ({ data, index, openDeletePopup, openStatusPopup }) => {
             type="button"
             className="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
             onClick={() => openDeletePopup(data?.id)}
+            title="Delete Review"
             >
               <Icon icon="fluent:delete-24-regular" className="menu-icon" />
             </button>
@@ -403,6 +441,7 @@ const ReviewRow = ({ data, index, openDeletePopup, openStatusPopup }) => {
                 type="button"
                 className="bg-warning-focus bg-hover-warning-200 text-warning-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
                 onClick={() => openStatusPopup(data?.id, ReviewStatus.Rejected)}
+                title="Reject Review"
               >
                 <Icon
                   icon="fluent:presence-blocked-24-regular"
@@ -413,6 +452,7 @@ const ReviewRow = ({ data, index, openDeletePopup, openStatusPopup }) => {
                 type="button"
                 className="bg-success-focus bg-hover-success-200 text-success-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
                 onClick={() => openStatusPopup(data?.id, ReviewStatus.Approved)}
+                title="Approve Review"
               >
                 <Icon icon="fa6-solid:check" className="menu-icon" />
               </button>
@@ -420,6 +460,7 @@ const ReviewRow = ({ data, index, openDeletePopup, openStatusPopup }) => {
           ) : data?.status == ReviewStatus.Approved ? (
             <button
               type="button"
+              title="Reject Review"
               className="bg-warning-focus bg-hover-warning-200 text-warning-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
               onClick={() => openStatusPopup(data?.id, ReviewStatus.Rejected)}
             >
@@ -433,6 +474,7 @@ const ReviewRow = ({ data, index, openDeletePopup, openStatusPopup }) => {
               type="button"
               className="bg-success-focus bg-hover-success-200 text-success-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
               onClick={() => openStatusPopup(data?.id, ReviewStatus.Approved)}
+              title="Approve Review"
             >
               <Icon icon="fa6-solid:check" className="menu-icon" />
             </button>

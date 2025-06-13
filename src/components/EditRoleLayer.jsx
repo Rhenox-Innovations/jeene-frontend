@@ -6,6 +6,8 @@ import { ThreeDots } from "react-loader-spinner";
 import { useLocation, useNavigate } from "react-router-dom";
 import { SIDE_BAR_CONFIG } from "../helper/common/Constants";
 import { MultipleSelect } from "react-select-material-ui";
+import { useDispatch } from "react-redux";
+import { navigatePage } from "../helper/common/Navigation";
 
 const EditRoleLayer = () => {
   const {state} = useLocation();
@@ -16,10 +18,12 @@ const EditRoleLayer = () => {
   const [errors, setErrors] = useState({});
   const [permissions, setPermissions] = useState(state?.permissions);
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   
   if(!state){
-    navigate("/roles-list")
+    navigatePage(navigate, dispatch, "/roles-list", null)
   }
+
   useEffect(() => {
     loadPermissions();
   }, [])
@@ -182,7 +186,7 @@ const EditRoleLayer = () => {
                       className="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8"
                       onClick={cancelHandler}
                     >
-                      Cancel
+                      Reset
                     </button>
                     <button
                       type="submit"

@@ -1,6 +1,6 @@
 const Endpoints = {
-  BASE_URL: "https://jeeneapi.rhenoxinnovations.com/api",
-  //BASE_URL: "https://localhost:44348/api",
+  //BASE_URL: "https://jeeneapi.rhenoxinnovations.com/api",
+  BASE_URL: "https://localhost:44348/api",
 
   //Authentication
   SIGN_IN: "/Authentication/Login",
@@ -45,6 +45,7 @@ const Endpoints = {
   UPDATE_REVIEW_STATUS: "/Review/UpdateStatus",
   UPDATE_REVIEW: "/Review/Update",
   DELETE_REVIEW: "/Review/Delete",
+  REVIEW_BY_ID: "/Review/GetById",
 
   //Rating Parameters
   GET_ALL_RATING_PARAMETERS: "/RatingParameter/GetAll",

@@ -99,7 +99,7 @@ const AssignRoleLayer = () => {
                         <option value="100">100</option>
                         <option value="1000">1000</option>
                     </select>
-          <form className="navbar-search">
+          <form className="navbar-search" onSubmit={(e) => e.preventDefault()}>
           <input
               type="text"
               className="bg-base h-40-px w-auto"

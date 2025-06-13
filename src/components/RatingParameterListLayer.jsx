@@ -7,6 +7,8 @@ import { ThreeDots } from "react-loader-spinner";
 import Paginator from "./child/Paginator";
 import { Button, Modal } from "react-bootstrap";
 import { useSelector } from "react-redux";
+import { navigatePage } from "../helper/common/Navigation";
+import { useDispatch } from "react-redux";
 
 const RatingParameterListLayer = () => {
   const [ratingParameterList, setRatingParameterList] = useState([]);
@@ -18,6 +20,8 @@ const RatingParameterListLayer = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const [popupLoading, setPopupLoading] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     loadData();
@@ -151,7 +155,7 @@ const RatingParameterListLayer = () => {
               <option value="100">100</option>
               <option value="1000">1000</option>
             </select>
-            <form className="navbar-search">
+            <form className="navbar-search" onSubmit={(e) => e.preventDefault()}>
               <input
                 type="text"
                 className="bg-base h-40-px w-auto"
@@ -174,6 +178,8 @@ const RatingParameterListLayer = () => {
           <Link
             to="/add-rating-parameter"
             className="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2"
+            onClick={() => navigatePage(navigate, dispatch, "/add-rating-parameter")}
+            
           >
             <Icon
               icon="ic:baseline-plus"
@@ -246,9 +252,11 @@ const CategoryRow = ({ data, index, openDeletePopup, getCategoryById }) => {
   const permissions = useSelector((state) => state?.auth?.permissions);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const editUserClicked = () => {
-    navigate("/edit-rating-parameter", { state: data });
+    navigatePage(navigate, dispatch, "/edit-rating-parameter", { state: data })
+    
   };
 
   return (
@@ -274,6 +282,7 @@ const CategoryRow = ({ data, index, openDeletePopup, getCategoryById }) => {
               type="button"
               className="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
               onClick={editUserClicked}
+              title="Edit Rating Parameter"
             >
               <Icon icon="lucide:edit" className="menu-icon" />
             </button>
@@ -283,6 +292,8 @@ const CategoryRow = ({ data, index, openDeletePopup, getCategoryById }) => {
               type="button"
               className="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
               onClick={() => openDeletePopup(data?.id)}
+              title="Delete Rating Parameter"
+
             >
               <Icon icon="fluent:delete-24-regular" className="menu-icon" />
             </button>

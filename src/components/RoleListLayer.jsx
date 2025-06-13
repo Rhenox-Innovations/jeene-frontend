@@ -7,6 +7,8 @@ import { ThreeDots } from "react-loader-spinner";
 import Paginator from "./child/Paginator";
 import { Button, Modal } from "react-bootstrap";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { navigatePage } from "../helper/common/Navigation";
 
 const RoleListLayer = () => {
   const [roleList, setRoleList] = useState([]);
@@ -126,7 +128,7 @@ const RoleListLayer = () => {
                         <option value="100">100</option>
                         <option value="1000">1000</option>
                     </select>
-          <form className="navbar-search">
+          <form className="navbar-search" onSubmit={(e) => e.preventDefault()}>
             <input
               type="text"
               className="bg-base h-40-px w-auto"
@@ -204,12 +206,15 @@ const RoleListLayer = () => {
 const CategoryRow = ({data, index, openDeletePopup}) => {
     
  const navigate = useNavigate();
+ const dispatch = useDispatch();
+
  const permissions = useSelector(state => state?.auth?.permissions)
 
   const editUserClicked = () => {
     var permissions = data.permissions.map((x) => x.componentName)
     data.permissions = permissions;
-    navigate("/edit-role", {state:  data})
+    navigatePage(navigate, dispatch, "/edit-role", { state: data })
+    
   }
 
   
@@ -238,6 +243,7 @@ const CategoryRow = ({data, index, openDeletePopup}) => {
             type="button"
             className="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
             onClick={editUserClicked}
+            title="Edit Role"
           >
             <Icon icon="lucide:edit" className="menu-icon" />
           </button>}
@@ -245,6 +251,8 @@ const CategoryRow = ({data, index, openDeletePopup}) => {
             type="button"
             className="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
             onClick={() => openDeletePopup(data?.id)}
+            title="Delete Role"
+
           >
             <Icon icon="fluent:delete-24-regular" className="menu-icon" />
           </button>}

@@ -9,6 +9,7 @@ import { UserRole } from "../helper/common/Enum";
 import { ErrorMessage } from "../helper/common/Message";
 import { ThreeDots } from "react-loader-spinner";
 import { Endpoints } from "../helper/common/Endpoint";
+import { navigatePage } from "../helper/common/Navigation";
 
 const SignInLayer = () => {
   const [email, setEmail] = useState("");
@@ -66,7 +67,7 @@ const SignInLayer = () => {
           if(result?.data){
              dispatch(setPermissions(result?.data?.data))
           }
-          return navigate('/dashboard');
+          return navigatePage(navigate, dispatch, '/dashboard')
       }else{
         setErrorMessage(ErrorMessage.NOT_AUTHORIZED);
         setPassword("");

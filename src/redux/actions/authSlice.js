@@ -6,7 +6,7 @@ const authSlice = createSlice({
     user: JSON.parse(localStorage.getItem("user")) || null,
     isAuthenticated: !!localStorage.getItem("user"),
     permissions: null,
-    currentPath: null,
+    currentPath: JSON.parse(localStorage.getItem("currentPath")) || null,
   },
   reducers: {
     login: (state, action) => {
@@ -30,6 +30,8 @@ const authSlice = createSlice({
     },
     setCurrentPath: (state, action) => {
       state.currentPath = action.payload
+      localStorage.removeItem("currentPath");
+      localStorage.setItem("currentPath", JSON.stringify(action.payload));
     }
   },
 });

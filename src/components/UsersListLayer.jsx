@@ -7,6 +7,8 @@ import { ThreeDots } from "react-loader-spinner";
 import Paginator from "./child/Paginator";
 import { Button, Modal } from "react-bootstrap";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { navigatePage } from "../helper/common/Navigation";
 
 const UsersListLayer = () => {
   const [userList, setUserList] = useState([]);
@@ -19,6 +21,8 @@ const UsersListLayer = () => {
   const [showStatusPopup, setShowStatusPopup] = useState();
   const [popupLoading, setPopupLoading] = useState(false);
   const [deactiveReason, setDeactivateReason] = useState("");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => { 
     getUserData();
@@ -198,7 +202,7 @@ const UsersListLayer = () => {
                         <option value="100">100</option>
                         <option value="1000">1000</option>
                     </select>
-          <form className="navbar-search">
+          <form className="navbar-search" onSubmit={(e) => e.preventDefault()}>
             <input
               type="text"
               className="bg-base h-40-px w-auto"
@@ -221,6 +225,7 @@ const UsersListLayer = () => {
         <Link
           to="/add-user"
           className="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2"
+          onClick={() => navigatePage(navigate, dispatch, "/add-user")}
         >
           <Icon
             icon="ic:baseline-plus"
@@ -291,18 +296,21 @@ const UsersListLayer = () => {
 const UserRow = ({data, index, openDeletePopup, openStatusPopup}) => {
  const permissions = useSelector(state => state?.auth?.permissions)
  const navigate = useNavigate();
- 
+ const dispatch = useDispatch();
+
     const profilePicture = data?.profilePicture
     ? data.profilePicture
     : "assets/images/user.png";
 
  
   const viewUserClicked = () => {
-    navigate("/view-profile", {state : {userId: data?.id}})
+    navigatePage(navigate, dispatch, "/view-profile", {state : {userId: data?.id}})
+    
   }
 
   const editUserClicked = () => {
-    navigate("/view-profile", {state :  {userId: data?.id}})
+    navigatePage(navigate, dispatch, "/view-profile", {state : {userId: data?.id}})
+
   }
 
   const joiningDate = new Date(data?.createdOn)
@@ -340,22 +348,22 @@ const UserRow = ({data, index, openDeletePopup, openStatusPopup}) => {
         </span>
       </td>
       <td>{data?.emailConfirmed ? (
-          <span className="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">
+          <span className="bg-success-focus text-success-600  border-success-main px-24 py-4 radius-4 fw-medium text-sm">
             Verified
           </span>
         ) : (
-          <span className="bg-warning-focus text-warning-600 border border-warning-main px-24 py-4 radius-4 fw-medium text-sm">
+          <span className="bg-warning-focus text-warning-600  border-warning-main px-24 py-4 radius-4 fw-medium text-sm">
             Not Verified
           </span>
         )}</td>
       <td className="text-center">
         {data?.isActive ? (
-          <span className="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm"
+          <span className="bg-success-focus text-success-600  border-success-main px-24 py-4 radius-4 fw-medium text-sm"
           onClick={() => openStatusPopup(data?.id, "Block")}>
             Active
           </span>
         ) : (
-          <span className="bg-danger-focus text-danger-600 border border-danger-main px-24 py-4 radius-4 fw-medium text-sm"
+          <span className="bg-danger-focus text-danger-600  border-danger-main px-24 py-4 radius-4 fw-medium text-sm"
           onClick={() => openStatusPopup(data?.id, "Activate")}>
             Blocked
           </span>
@@ -369,6 +377,7 @@ const UserRow = ({data, index, openDeletePopup, openStatusPopup}) => {
               type="button"
               className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
               onClick={viewUserClicked}
+              title="View Details"
             >
               <Icon icon="majesticons:eye-line" className="icon text-xl" />
             </button>
@@ -379,6 +388,7 @@ const UserRow = ({data, index, openDeletePopup, openStatusPopup}) => {
               type="button"
               className="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
               onClick={editUserClicked}
+              title="Edit User"
             >
               <Icon icon="lucide:edit" className="menu-icon" />
             </button>
@@ -389,6 +399,8 @@ const UserRow = ({data, index, openDeletePopup, openStatusPopup}) => {
                 type="button"
                 className="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
                 onClick={() => openDeletePopup(data?.id)}
+                title="Delete User"
+
               >
                 <Icon icon="fluent:delete-24-regular" className="menu-icon" />
               </button>
@@ -398,6 +410,8 @@ const UserRow = ({data, index, openDeletePopup, openStatusPopup}) => {
             type="button"
             className="bg-warning-focus bg-hover-warning-200 text-warning-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
             onClick={() => openStatusPopup(data?.id, "Block")}
+            title="Block User"
+
           >
             <Icon icon="fluent:presence-blocked-24-regular" className="menu-icon" />
           </button> : 
@@ -405,6 +419,9 @@ const UserRow = ({data, index, openDeletePopup, openStatusPopup}) => {
             type="button"
             className="bg-success-focus bg-hover-success-200 text-success-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
             onClick={() => openStatusPopup(data?.id, "Activate")}
+            title="Activate User"
+
+
           >
             <Icon icon="fa6-solid:check" className="menu-icon" />
           </button>

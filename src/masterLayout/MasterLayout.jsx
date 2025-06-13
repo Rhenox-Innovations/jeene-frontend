@@ -12,6 +12,7 @@ import {
 import { SIDE_BAR_CONFIG } from "../helper/common/Constants";
 import apiRequest from "../helper/axios";
 import { Endpoints } from "../helper/common/Endpoint";
+import { navigatePage } from "../helper/common/Navigation";
 
 const MasterLayout = ({ children }) => {
   let [sidebarActive, seSidebarActive] = useState(false);
@@ -37,7 +38,7 @@ const MasterLayout = ({ children }) => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/sign-in");
+    navigatePage(navigate, dispatch, "/sign-in");
   };
 
   const loadPermissions = async () => {
@@ -93,7 +94,7 @@ const MasterLayout = ({ children }) => {
                 >
                   <Icon icon="heroicons:bars-3-solid" className="icon" />
                 </button>
-                {/* <form className="navbar-search">
+                {/* <form className="navbar-search" onSubmit={(e) => e.preventDefault()}>
                   <input type="text" name="search" placeholder="Search" />
                   <Icon icon="ion:search-outline" className="icon" />
                 </form> */}
@@ -370,19 +371,22 @@ const SideBar = ({
   const dispatch = useDispatch();
 
   const [sidebarElements, setSideBarElements] = useState([]);
+  
   useEffect(() => {
     getSideBarList(permissions)
   }, [])
 
   useEffect(() => {
-     const isFirstLoad = sessionStorage.getItem('hasVisited');
-    // Function to handle dropdown clicks
-    const dropdownTriggers = addTriggersOnDropdowns();
-    if(isFirstLoad && sidebarElements?.length > 0 && currentPathName){
-      console.log(currentPathName)
-      navigate(currentPathName)
-      dispatch(setCurrentPath(null))
+    if(sidebarElements?.length > 0 && currentPathName && currentPathName?.pathname != '/' && currentPathName?.pathname != '/dashboard' ) {
+      navigate(currentPathName.pathname, {state: currentPathName.state})
     }
+  }, [sidebarElements])
+
+  useEffect(() => {
+    // Function to handle dropdown clicks 
+
+    const dropdownTriggers = addTriggersOnDropdowns();
+    
     // Cleanup event listeners on unmount
     return () => {
       dropdownTriggers.forEach((trigger) => {
@@ -516,7 +520,7 @@ const SideBar = ({
                             className={(navData) =>
                               navData.isActive ? "active-page" : ""
                             }
-                            onClick={() => dispatch(setCurrentPath(child.path))}
+                            onClick={() => navigatePage(navigate, dispatch, child.path)}
                           >
                             <i
                               className={
@@ -543,7 +547,7 @@ const SideBar = ({
                   className={(navData) =>
                     navData.isActive ? "active-page" : ""
                   }
-                  onClick={() => dispatch(setCurrentPath(item.path))}
+                  onClick={() => navigatePage(navigate, dispatch, item.path)}
                 >
                   <Icon icon={item.icon} className="menu-icon" />
                   <span>{item.title}</span>
