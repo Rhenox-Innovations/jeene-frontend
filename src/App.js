@@ -30,6 +30,7 @@ import AddRolePage from "./pages/AddRolePage";
 import RoleListPage from "./pages/RoleListPage";
 import EditRolePage from "./pages/EditRolePage";
 import { PrivateRoutes } from "./components/PrivateRoute";
+import CalendarMainPage from "./pages/CalendarMainPage";
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
           <Route exact path="/sign-in" element={<SignInPage />} />
 
           <Route element={<PrivateRoutes />}>
+            <Route excat path="/calendar" element={<CalendarMainPage/>}/>
             <Route exact path="/dashboard" element={<HomePageSix />} />
             <Route exact path="/add-user" element={<AddUserPage />} />
             <Route exact path="/assign-role" element={<AssignRolePage />} />
