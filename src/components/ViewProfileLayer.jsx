@@ -43,6 +43,7 @@ const ViewProfileLayer = ({ page }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    debugger
     checkUserProfile();
     getRoles();
     getInterests();
@@ -292,7 +293,7 @@ const ViewProfileLayer = ({ page }) => {
                     </span>
                   </li>
 
-                  <li className="d-flex align-items-center gap-1 mb-12">
+                  {role == 'User' && <li className="d-flex align-items-center gap-1 mb-12">
                     <span className="w-30 text-md fw-semibold text-primary-light">
                       {" "}
                       Bio
@@ -300,8 +301,8 @@ const ViewProfileLayer = ({ page }) => {
                     <span className="w-70 text-secondary-light fw-medium">
                       {bio ? bio : "N/A"}
                     </span>
-                  </li>
-                  <li className="d-flex align-items-center gap-1 mb-12">
+                  </li> }
+                  {role == 'User' && <li className="d-flex align-items-center gap-1 mb-12" >
                     <span className="w-30 text-md fw-semibold text-primary-light">
                       {" "}
                       Interests
@@ -311,7 +312,7 @@ const ViewProfileLayer = ({ page }) => {
                         ? interests?.map((x) => x.name).join(", ")
                         : "N/A"}
                     </span>
-                  </li>
+                  </li> }
                   
                   <li className="d-flex align-items-center gap-1 mb-12">
                     <span className="w-30 text-md fw-semibold text-primary-light">
@@ -561,7 +562,7 @@ const ViewProfileLayer = ({ page }) => {
                           </select>
                         </div>
                       </div>
-                      <div className="col-sm-6">
+                      <div className="col-sm-6" hidden={role != 'User'}>
                         <div className="mb-20">
                           <label
                             htmlFor="desig"
@@ -587,7 +588,7 @@ const ViewProfileLayer = ({ page }) => {
                           />
                         </div>
                       </div>
-                      <div className="col-sm-12">
+                      <div className="col-sm-12" hidden={role != 'User'}>
                         <div className="mb-20">
                           <label
                             htmlFor="desc"
@@ -607,13 +608,7 @@ const ViewProfileLayer = ({ page }) => {
                       </div>
                     </div>
                     <div className="d-flex align-items-center justify-content-center gap-3">
-                      <button
-                        type="button"
-                        className="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8"
-                        onClick={handleCancel}
-                      >
-                        Reset
-                      </button>
+                     
                       <button
                         type="submit"
                         className="d-flex justify-content-center btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8"

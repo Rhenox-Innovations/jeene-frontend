@@ -12708,7 +12708,7 @@ td.fc-header-center {
 .chat-main-profile .img img {
   width: 80px;
   height: 80px;
-  : cover;
+  object-fit: cover;
   -o-object-fit: cover;
   border-radius: 50%;
   -webkit-border-radius: 50%;

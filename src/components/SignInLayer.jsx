@@ -53,6 +53,7 @@ const SignInLayer = () => {
     const requestData = {
       email: email,
       password: password,
+      isWeb: true
     };
     try {
       const response = await apiRequest.post(

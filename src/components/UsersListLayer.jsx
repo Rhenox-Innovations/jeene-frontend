@@ -9,10 +9,13 @@ import { Button, Modal } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { navigatePage } from "../helper/common/Navigation";
+import numeral from "numeral";
 
 const UsersListLayer = () => {
   const [userList, setUserList] = useState([]);
   const [userListOld, setUserListOld] = useState([]);
+  const [roleList, setRoleList] = useState([]);
+
   const [loading, setLoading] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -21,11 +24,16 @@ const UsersListLayer = () => {
   const [showStatusPopup, setShowStatusPopup] = useState();
   const [popupLoading, setPopupLoading] = useState(false);
   const [deactiveReason, setDeactivateReason] = useState("");
+  const [role, setRole] = useState("");
+  const [status, setStatus] = useState("");
+  const [verified, setVerified] = useState("");
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => { 
     getUserData();
+    getRoleData();
   }, []);
 
   const getUserData = async () => {
@@ -37,6 +45,13 @@ const UsersListLayer = () => {
       setUserListOld(response.data.data);
     }
   };
+
+  const getRoleData = async () => {
+    let response = await apiRequest.get(Endpoints.GET_ROLES);
+    if (response && response.data) {
+      setRoleList(response.data.data);
+    }
+  }
 
   const onStatusChange = (evt) => {
     if (evt.target.value === "Active") {
@@ -57,7 +72,9 @@ const UsersListLayer = () => {
         (x) =>
           x.fullName.toLowerCase().includes(value) ||
           x.email.toLowerCase().includes(value) ||
-          x.roles.includes(value)
+          x.roles.includes(value) ||
+          x.totalReviews == (value) || 
+          x.createdOn.includes(value)
       );
       setUserList(filtered);
     } else {
@@ -123,6 +140,36 @@ const UsersListLayer = () => {
     setUserListOld(filteredOld)
     const filtered = userList.filter((i) => i?.id !== userId);
     setUserList(filtered)
+  }
+
+  const onRoleChange = (e) => {
+    if (e.target.value !== "") {
+     let filtered = userListOld.filter((x) => x.roles.includes(e.target.value));
+      setUserList(filtered);
+    } else {
+      setUserList(userListOld);
+    }
+  }
+
+  const filterButtonClick = () => {
+    debugger
+    var userListFiltered = userListOld;
+    if (status === "Active") {
+      userListFiltered = userListFiltered.filter((x) => x.isActive);
+    } else if (status === "Blocked") {
+      userListFiltered = userListFiltered.filter((x) => !x.isActive);
+    }
+
+    if (role !== "") {
+      userListFiltered = userListFiltered.filter((x) => x.roles.includes(role));
+    }
+
+    if (verified === "Verified") {
+      userListFiltered = userListFiltered.filter((x) => x.emailConfirmed);
+    } else if (verified === "Not Verified") {
+      userListFiltered = userListFiltered.filter((x) => !x.emailConfirmed);
+    }
+    setUserList(userListFiltered);
   }
 
   return (
@@ -212,15 +259,43 @@ const UsersListLayer = () => {
             />
             <Icon icon="ion:search-outline" className="icon" />
           </form>
+          
           <select
             className="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px"
-            onChange={onStatusChange}
-            defaultValue="Select Status"
+            onChange={(e) => setStatus(e.target.value)}
+            value={status}
           >
-            <option value="Select Status">Select Status</option>
+            <option value="">Select Status</option>
             <option value="Active">Active</option>
             <option value="Blocked">Blocked</option>
           </select>
+          <select
+            className="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px"
+            onChange={(e) => setVerified(e.target.value)}
+            value={verified}
+          >
+            <option value="">Select Verification</option>
+            <option value="Verified">Verified</option>
+            <option value="Not Verified">Not Verified</option>
+          </select>
+          <select
+            className="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px"
+            onChange={(e) => setRole(e.target.value)}
+            value={role}
+          >
+            <option value="">Select Role</option>
+            {
+              roleList?.map((role, index) => <option key={index} value={role.name}>{role.name}</option>)
+            }
+          </select>
+           <button
+                type="button"
+                className="btn rounded-pill-bordered text-primary-600 radius-8 px-20 py-11"
+                onClick={filterButtonClick}
+                disabled={loading}
+              >
+                Filter
+              </button>
         </div>
         <Link
           to="/add-user"
@@ -262,6 +337,7 @@ const UsersListLayer = () => {
                     <th scope="col">Name</th>
                     <th scope="col">Email</th>
                     <th scope="col">Joining Date</th>
+                    <th scope="col">Total Reviews</th>
                     <th scope="col">Verified</th>
                     <th scope="col" className="text-center">
                       Status
@@ -345,6 +421,11 @@ const UserRow = ({data, index, openDeletePopup, openStatusPopup}) => {
       <td>
         <span className="text-md mb-0 fw-normal text-secondary-light">
           {joiningDate.toDateString()}
+        </span>
+      </td>
+      <td>
+        <span className="text-md mb-0 fw-normal text-secondary-light">
+          {numeral(data?.totalReviews).format('0.[0]a')}
         </span>
       </td>
       <td>{data?.emailConfirmed ? (
