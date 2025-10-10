@@ -28,8 +28,9 @@ const RoleListLayer = () => {
     setLoading(true);
     let response = await apiRequest.get(Endpoints.GET_ROLES);
     if (response && response.data) {
-      setRoleList(response.data.data);
-      setRoleListOld(response.data.data)
+      const filtered = (response.data.data || []).filter(r => r?.name !== 'Admin' && r?.name !== 'User');
+      setRoleList(filtered);
+      setRoleListOld(filtered)
     }
 
     setLoading(false);
@@ -40,7 +41,7 @@ const RoleListLayer = () => {
     if (value && roleListOld?.length > 0) {
       let filtered = roleListOld?.filter(
         (x) =>
-          x.Name.toLowerCase().includes(value)
+          x.name?.toLowerCase().includes(value)
       );
       setRoleList(filtered);
     } else {

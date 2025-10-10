@@ -190,7 +190,7 @@ const ReviewsListLayer = () => {
   }
 
   const getDateOnly = (d) => {
-      return  `${d.getFullYear()}-${("0"+(d.getMonth()+1)).slice(-2)}-${("0" + d.getDate()).slice(-2)}`
+      return  `${d.getUTCFullYear()}-${("0"+(d.getUTCMonth()+1)).slice(-2)}-${("0" + d.getUTCDate()).slice(-2)}`
   }
 
   return (
@@ -294,7 +294,7 @@ const ReviewsListLayer = () => {
                   <div className="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-0">
                     <div className="d-flex align-items-center gap-2 mb-12">
                       <span className="mb-0 w-48-px h-48-px bg-base text-blue text-2xl flex-shrink-0 d-flex justify-content-center align-items-center rounded-circle h6">
-                        <i className="ri-group-fill" />
+                        <i className="ri-user-star-fill" />
                       </span>
                       <div>
                         <span className="mb-0 fw-medium text-secondary-light text-lg">
@@ -345,7 +345,7 @@ const ReviewsListLayer = () => {
                   <div className="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-0">
                     <div className="d-flex align-items-center gap-2 mb-12">
                       <span className="mb-0 w-48-px h-48-px bg-base text-blue text-2xl flex-shrink-0 d-flex justify-content-center align-items-center rounded-circle h6">
-                        <i className="ri-calendar-check-fill" />
+                        <i className="ri-checkbox-circle-fill" />
                       </span>
                       <div>
                         <span className="mb-0 fw-medium text-secondary-light text-lg">
@@ -371,7 +371,7 @@ const ReviewsListLayer = () => {
                   <div className="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-0">
                     <div className="d-flex align-items-center gap-2 mb-12">
                       <span className="mb-0 w-48-px h-48-px bg-base text-pink text-2xl flex-shrink-0 d-flex justify-content-center align-items-center rounded-circle h6">
-                        <i className="ri-close-fill" />
+                        <i className="ri-close-circle-fill" />
                       </span>
                       <div>
                         <span className="mb-0 fw-medium text-secondary-light text-lg">

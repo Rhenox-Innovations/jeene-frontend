@@ -21,7 +21,6 @@ const AddCategoryLayer = () => {
 
     if(validate()){
         setLoading(true)
-        debugger
         const requestData = {
             name,
             description,
@@ -44,7 +43,7 @@ const AddCategoryLayer = () => {
   const cancelHandler = () => {
     setName("");
     setDescription("");
-    setShowOnDashboard("");
+    setShowOnDashboard(false);
   }
 
   const showSuccessMessage = () => {
@@ -149,7 +148,7 @@ const AddCategoryLayer = () => {
                       className="form-control radius-8 form-select"
                       id="showOnDashboard"
                       value={showOnDashboard}
-                      onChange={(e) => setShowOnDashboard(e.target.value)}
+                      onChange={(e) => setShowOnDashboard(Boolean(e.target.value))}
                       required
                     >
                       <option value="Select" disabled>

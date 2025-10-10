@@ -376,11 +376,9 @@ const SideBar = ({
     getSideBarList(permissions)
   }, [])
 
-  useEffect(() => {
-    if(sidebarElements?.length > 0 && currentPathName && currentPathName?.pathname != '/' && currentPathName?.pathname != '/dashboard' ) {
-      navigate(currentPathName.pathname, {state: currentPathName.state})
-    }
-  }, [sidebarElements])
+  // Remove auto-navigation on mount to respect browser history and back navigation
+  // The previous effect caused redirects after reload, flashing dashboard and breaking back button
+  // If needed, navigation should be user-driven or handled at route level
 
   useEffect(() => {
     // Function to handle dropdown clicks 
@@ -520,7 +518,6 @@ const SideBar = ({
                             className={(navData) =>
                               navData.isActive ? "active-page" : ""
                             }
-                            onClick={() => navigatePage(navigate, dispatch, child.path)}
                           >
                             <i
                               className={
@@ -547,7 +544,6 @@ const SideBar = ({
                   className={(navData) =>
                     navData.isActive ? "active-page" : ""
                   }
-                  onClick={() => navigatePage(navigate, dispatch, item.path)}
                 >
                   <Icon icon={item.icon} className="menu-icon" />
                   <span>{item.title}</span>
