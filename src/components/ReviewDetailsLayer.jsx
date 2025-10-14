@@ -254,23 +254,29 @@ const ReviewDetailsLayer = () => {
               </div>
             </div>
             <div className="info flex-grow-1">
-              <div className="card-body py-24 px-16 multiple-carousel dots-style-circle">
-                <ImageGallery
-                  lazyLoad={true}
-                  showFullscreenButton={true}
-                  showPlayButton={false}
-                  additionalClass="review-slider"
-                  items={review?.reviewAttachments?.map((attachment) => {
-                    return {
-                      original:
-                        Endpoints.BASE_URL.replace("/api","") +
-                        attachment.link,
-                      thumbnail:
-                        Endpoints.BASE_URL.replace("/api","") +
-                        attachment.link,
-                    };
-                  })}
-                />
+              <div style={{
+                justifyItems: "center"
+              }}>
+                <div className="card-body py-24 px-16 multiple-carousel dots-style-circle review-slider-container">
+                  <ImageGallery
+                    lazyLoad={true}
+                    showFullscreenButton={true}
+                    showPlayButton={false}
+                    additionalClass="review-slider"
+                    items={review?.reviewAttachments?.map((attachment) => {
+                      return {
+                        original:
+                          Endpoints.BASE_URL.replace("/api","") +
+                          attachment.link,
+                        thumbnail:
+                          Endpoints.BASE_URL.replace("/api","") +
+                          attachment.link,
+                        
+                      };
+                    })}
+                  />
+                </div>
+
               </div>
               <div className="d-flex row">
                 <div className="row mb-10">
@@ -376,11 +382,23 @@ const ReviewDetailsLayer = () => {
                   )}
                 </div>
                 <div className="row mb-24">
-                  {review?.userRatings?.length > 0 && <div className="col-md-3">
-                    <h6 className="text-md">Average Rating</h6>
-                    <span>{(review?.userRatings?.reduce((a, b) => a + b.value, 0) / review?.userRatings?.length).toFixed(2)}</span>
+                    {review?.userRatings?.length > 0 && <div className="col-md-12 d-flex align-items-end">
+                      <div className="col-md-3 mb-10">
+                      <h6 className="text-md">Average Rating</h6>
+                      <span>{(review?.userRatings?.reduce((a, b) => a + b.value, 0) / review?.userRatings?.length).toFixed(2)}</span>
+                    </div>
+                    <div className="col-md-6 d-flex justify-content-between align-items-center">
+                      {
+                        review?.userRatings?.map((rating) => <>
+                            <h6 className="text-sm mb-0">{rating?.ratingParameter?.name}</h6>
+                            <span className="text-sm">{rating?.value.toFixed(2)}</span>
+                        </>)
+                      }
+                    </div>
                   </div>
                   }
+
+                  
                 </div>
                 <hr />
                 <div className="mt-24 w-30">
