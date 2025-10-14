@@ -1,26 +1,25 @@
 import React from "react";
 import MasterLayout from "../masterLayout/MasterLayout";
 import Breadcrumb from "../components/Breadcrumb";
-import DashBoardLayerSix from "../components/DashBoardLayerSix";
+import ReviewsListLayer from "../components/ReviewsListLayer";
+const ReviewsListPage = () => {
+  
 
-
-const HomePageSix = () => {
   return (
     <>
       {/* MasterLayout */}
       <MasterLayout>
 
         {/* Breadcrumb */}
-        <Breadcrumb title="Jeene Dashboard" />
+        <Breadcrumb title="Reviews List" />
 
-        {/* DashBoardLayerSix */}
-        <DashBoardLayerSix />
-
-
+        {/* ReviewsListLayer */}
+        <ReviewsListLayer />
 
       </MasterLayout>
+
     </>
   );
 };
 
-export default HomePageSix;
+export default ReviewsListPage; 

@@ -3060,6 +3060,10 @@ html[data-theme=dark] .bg-gradient-dark-start-3 {
   background: linear-gradient(262deg, rgba(235, 250, 255, 0.15) 4.01%, rgba(192, 240, 255, 0.15) 99.29%);
 }
 
+html[data-theme=dark] .bg-gradient-dark-start-4 {
+  background: linear-gradient(262deg, rgba(211, 7, 7, 0.158) 4.01%, rgba(255, 192, 192, 0.15) 99.29%);
+}
+
 html[data-theme=dark] .bg-gradient-end-1 {
   background: linear-gradient(to right, rgba(255, 255, 255, 0.075), rgba(239, 244, 255, 0.125));
 }

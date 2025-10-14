@@ -23,7 +23,7 @@ const UsersGridLayer = () => {
                         <option value="9">9</option>
                         <option value="10">10</option>
                     </select>
-                    <form className="navbar-search">
+                    <form className="navbar-search" onSubmit={(e) => e.preventDefault()}>
                         <input
                             type="text"
                             className="bg-base h-40-px w-auto"

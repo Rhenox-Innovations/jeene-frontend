@@ -11,6 +11,7 @@ import { useLocation } from "react-router-dom";
 
 const ViewProfileLayer = ({ page }) => {
   const { state } = useLocation();
+  const permissions = useSelector((state) => state?.auth?.permissions);
   const { userData } = useSelector((state) => state.auth.user);
   const [imagePreview, setImagePreview] = useState(userData?.profilePicture);
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -20,7 +21,7 @@ const ViewProfileLayer = ({ page }) => {
   const [fullName, setFullName] = useState(userData?.fullName);
   const [email, setEmail] = useState(userData?.email);
   const [role, setRole] = useState(userData?.roles?.[0]);
-  const [bio, setBio] = useState(userData?.fullName);
+  const [bio, setBio] = useState(userData?.bio);
   const [interests, setInterests] = useState(userData?.interests);
   const [roleData, setRoleData] = useState([]);
   const [interestData, setInterestData] = useState([]);
@@ -42,6 +43,7 @@ const ViewProfileLayer = ({ page }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    debugger
     checkUserProfile();
     getRoles();
     getInterests();
@@ -291,7 +293,7 @@ const ViewProfileLayer = ({ page }) => {
                     </span>
                   </li>
 
-                  <li className="d-flex align-items-center gap-1 mb-12">
+                  {role == 'User' && <li className="d-flex align-items-center gap-1 mb-12">
                     <span className="w-30 text-md fw-semibold text-primary-light">
                       {" "}
                       Bio
@@ -299,8 +301,8 @@ const ViewProfileLayer = ({ page }) => {
                     <span className="w-70 text-secondary-light fw-medium">
                       {bio ? bio : "N/A"}
                     </span>
-                  </li>
-                  <li className="d-flex align-items-center gap-1 mb-12">
+                  </li> }
+                  {role == 'User' && <li className="d-flex align-items-center gap-1 mb-12" >
                     <span className="w-30 text-md fw-semibold text-primary-light">
                       {" "}
                       Interests
@@ -310,7 +312,7 @@ const ViewProfileLayer = ({ page }) => {
                         ? interests?.map((x) => x.name).join(", ")
                         : "N/A"}
                     </span>
-                  </li>
+                  </li> }
                   
                   <li className="d-flex align-items-center gap-1 mb-12">
                     <span className="w-30 text-md fw-semibold text-primary-light">
@@ -361,7 +363,7 @@ const ViewProfileLayer = ({ page }) => {
           </div>
         </div>
       </div>
-      <div className="col-lg-8">
+      { state == null || permissions?.includes("/edit-user") &&  <div className="col-lg-8">
         
         {!pageLoading && (
           <div className="card h-100">
@@ -392,6 +394,8 @@ const ViewProfileLayer = ({ page }) => {
                 id="pills-tab"
                 role="tablist"
               >
+               
+                
                 <li className="nav-item" role="presentation">
                   <button
                     className="nav-link d-flex align-items-center px-24 active"
@@ -406,6 +410,7 @@ const ViewProfileLayer = ({ page }) => {
                     Edit Profile
                   </button>
                 </li>
+                
                 <li className="nav-item" role="presentation">
                   <button
                     className="nav-link d-flex align-items-center px-24"
@@ -550,14 +555,14 @@ const ViewProfileLayer = ({ page }) => {
                               Select User Role
                             </option>
                             {roleData.map((role, index) => (
-                              <option value={role.roleName} key={index}>
-                                {role.roleName}
+                              <option value={role.name} key={index}>
+                                {role.name}
                               </option>
                             ))}
                           </select>
                         </div>
                       </div>
-                      <div className="col-sm-6">
+                      <div className="col-sm-6" hidden={role != 'User'}>
                         <div className="mb-20">
                           <label
                             htmlFor="desig"
@@ -583,7 +588,7 @@ const ViewProfileLayer = ({ page }) => {
                           />
                         </div>
                       </div>
-                      <div className="col-sm-12">
+                      <div className="col-sm-12" hidden={role != 'User'}>
                         <div className="mb-20">
                           <label
                             htmlFor="desc"
@@ -603,13 +608,7 @@ const ViewProfileLayer = ({ page }) => {
                       </div>
                     </div>
                     <div className="d-flex align-items-center justify-content-center gap-3">
-                      <button
-                        type="button"
-                        className="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8"
-                        onClick={handleCancel}
-                      >
-                        Cancel
-                      </button>
+                     
                       <button
                         type="submit"
                         className="d-flex justify-content-center btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8"
@@ -746,7 +745,8 @@ const ViewProfileLayer = ({ page }) => {
             </div>
           </div>
         )}
-      </div>
+        </div>
+      }
     </div>
   );
 };

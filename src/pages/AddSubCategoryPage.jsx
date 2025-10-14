@@ -1,21 +1,19 @@
 import React from "react";
 import MasterLayout from "../masterLayout/MasterLayout";
 import Breadcrumb from "../components/Breadcrumb";
-import DashBoardLayerSix from "../components/DashBoardLayerSix";
+import AddSubCategoryLayer from "../components/AddSubCategoryLayer";
 
-
-const HomePageSix = () => {
+const AddSubCategoryPage = () => {
   return (
     <>
       {/* MasterLayout */}
       <MasterLayout>
 
         {/* Breadcrumb */}
-        <Breadcrumb title="Jeene Dashboard" />
+        <Breadcrumb title="Add Sub-category" />
 
-        {/* DashBoardLayerSix */}
-        <DashBoardLayerSix />
-
+        {/* AddSubCategoryLayer */}
+        <AddSubCategoryLayer />
 
 
       </MasterLayout>
@@ -23,4 +21,4 @@ const HomePageSix = () => {
   );
 };
 
-export default HomePageSix;
+export default AddSubCategoryPage;

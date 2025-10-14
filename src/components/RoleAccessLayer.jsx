@@ -26,7 +26,7 @@ const RoleAccessLayer = () => {
                             <option value="9">9</option>
                             <option value="10">10</option>
                         </select>
-                        <form className="navbar-search">
+                        <form className="navbar-search" onSubmit={(e) => e.preventDefault()}>
                             <input
                                 type="text"
                                 className="bg-base h-40-px w-auto"
@@ -705,7 +705,7 @@ const RoleAccessLayer = () => {
                                             type="reset"
                                             className="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-40 py-11 radius-8"
                                         >
-                                            Cancel
+                                            Reset
                                         </button>
                                         <button
                                             type="submit"

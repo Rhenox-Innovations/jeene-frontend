@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { UserRole } from "../helper/common/Enum";
 import apiRequest from "../helper/axios";
 import { Endpoints } from "../helper/common/Endpoint";
@@ -12,6 +12,20 @@ const AddUserLayer = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [roleList, setRoleList] = useState([]);
+  useEffect(() => {
+    const loadRoles = async () => {
+      try{
+        const response = await apiRequest.get(Endpoints.GET_ROLES);
+        if(response?.data?.data){
+          setRoleList(response.data.data);
+        }
+      }catch(e){
+        // silently ignore; dropdown will show static placeholder
+      }
+    }
+    loadRoles();
+  }, []);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState();
 
@@ -190,11 +204,9 @@ const AddUserLayer = () => {
                       <option value="Select Role" disabled>
                         Select Role
                       </option>
-                      <option value={UserRole.USER}>{UserRole.USER}</option>
-                      <option value={UserRole.MODERATOR}>
-                        {UserRole.MODERATOR}
-                      </option>
-                      <option value={UserRole.ADMIN}>{UserRole.ADMIN}</option>
+                      {roleList?.filter((r) => r?.name !== 'User')?.map((r) => (
+                        <option key={r?.id || r?.name} value={r?.name}>{r?.name}</option>
+                      ))}
                     </select>
                   </div>
                   <div className="mb-20">
@@ -240,7 +252,7 @@ const AddUserLayer = () => {
                       className="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8"
                       onClick={cancelHandler}
                     >
-                      Cancel
+                      Reset
                     </button>
                     <button
                       type="submit"

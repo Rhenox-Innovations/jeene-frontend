@@ -4,11 +4,12 @@ import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import apiRequest from "../helper/axios";
 import ErrorAlert from "./ErrorAlert";
-import { login } from "../redux/actions/authSlice";
+import { login, setPermissions } from "../redux/actions/authSlice";
 import { UserRole } from "../helper/common/Enum";
 import { ErrorMessage } from "../helper/common/Message";
 import { ThreeDots } from "react-loader-spinner";
 import { Endpoints } from "../helper/common/Endpoint";
+import { navigatePage } from "../helper/common/Navigation";
 
 const SignInLayer = () => {
   const [email, setEmail] = useState("");
@@ -52,6 +53,7 @@ const SignInLayer = () => {
     const requestData = {
       email: email,
       password: password,
+      isWeb: true
     };
     try {
       const response = await apiRequest.post(
@@ -59,10 +61,14 @@ const SignInLayer = () => {
         requestData
       );
       setLoading(false);
-      const userAuthorized = response?.data?.data?.userData?.roles?.filter(x => x === UserRole.ADMIN || x === UserRole.MODERATOR)?.length;
+      const userAuthorized = response?.data?.data?.userData?.roles?.filter(x => x != UserRole.USER)?.length;
       if(userAuthorized){
           dispatch(login(response?.data?.data));
-          return navigate('/dashboard');
+          let result = await apiRequest.get(Endpoints.GET_ROLE_PERMISSIONS + "/" + response?.data?.data?.userData?.roles[0])
+          if(result?.data){
+             dispatch(setPermissions(result?.data?.data))
+          }
+          return navigatePage(navigate, dispatch, '/dashboard')
       }else{
         setErrorMessage(ErrorMessage.NOT_AUTHORIZED);
         setPassword("");
