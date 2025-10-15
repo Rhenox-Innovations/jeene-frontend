@@ -183,7 +183,7 @@ const RoleListLayer = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {getCurrentPageData()?.map((data, index) =>
+                  {roleList?.length === 0 ? <tr><td>No records found.</td></tr> :  getCurrentPageData()?.map((data, index) =>
                     <CategoryRow key={index} data={data} index={index} openDeletePopup={openDeletePopup}/>
                   )}
                 </tbody>

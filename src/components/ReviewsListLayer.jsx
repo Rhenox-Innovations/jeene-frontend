@@ -43,8 +43,20 @@ const ReviewsListLayer = () => {
     setLoading(true);
     let response = await apiRequest.get(Endpoints.GET_ALL_REVIEWS, {params});
     setLoading(false);
+
     if (response && response.data) {
-      var reviewData = response.data.data?.sort((a, b) => a.status - b.status);
+      var reviewData = response.data.data?.sort((a, b) => {
+        // First sort by status (ascending)
+        const statusDiff = a.status - b.status;
+
+        // If status is same, sort by date (descending — newest first)
+        if (statusDiff === 0) {
+          return new Date(b.postedDateTime) - new Date(a.postedDateTime);
+        }
+
+        return statusDiff;
+      });
+
       setReviewList(reviewData);
       setReviewListOld(reviewData);
     }
@@ -183,7 +195,17 @@ const ReviewsListLayer = () => {
     let response = await apiRequest.get(Endpoints.GET_ALL_REVIEWS, {params});
     setLoading(false);
     if (response && response.data) {
-      var reviewData = response.data.data?.sort((a, b) => a.status - b.status);
+      var reviewData = response.data.data?.sort((a, b) => {
+        // First sort by status (ascending)
+        const statusDiff = a.status - b.status;
+
+        // If status is same, sort by date (descending — newest first)
+        if (statusDiff === 0) {
+          return new Date(b.postedDateTime) - new Date(a.postedDateTime);
+        }
+
+        return statusDiff;
+      });
       setReviewList(reviewData);
       setReviewListOld(reviewData);
     }
@@ -496,7 +518,7 @@ const ReviewsListLayer = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {getCurrentPageData()?.map((data, index) => (
+                    {reviewList?.length === 0 ? <tr><td>No records found.</td></tr> :   getCurrentPageData()?.map((data, index) => (
                       <ReviewRow
                         key={index}
                         data={data}
@@ -533,7 +555,10 @@ const ReviewRow = ({ data, index, openDeletePopup, openStatusPopup }) => {
   };
 
   const postedDateTime = new Date(data?.postedDateTime);
-
+  const getDateTime = (dateTimeString) => {
+    var date = new Date(dateTimeString);
+    return `${("0"+(date.getDate())).slice(-2)}-${("0"+(date.getMonth()+1)).slice(-2)}-${date.getFullYear()} ${("0"+(date.getHours())).slice(-2)}:${("0"+(date.getMinutes())).slice(-2)}:${("0"+(date.getSeconds())).slice(-2)}`
+  }
   return (
     <tr key={index}>
       {/* <td>
@@ -561,7 +586,7 @@ const ReviewRow = ({ data, index, openDeletePopup, openStatusPopup }) => {
       </td>
       <td>
         <span className="text-md mb-0 fw-normal text-secondary-light">
-          {postedDateTime.toDateString()}
+          {getDateTime(data?.postedDateTime)}
         </span>
       </td>
       <td className="text-center">

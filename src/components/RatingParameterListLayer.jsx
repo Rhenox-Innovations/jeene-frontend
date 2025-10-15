@@ -221,7 +221,7 @@ const RatingParameterListLayer = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {getCurrentPageData()?.map((data, index) => (
+                    {ratingParameterList?.length === 0 ? <tr><td>No records found.</td></tr> : getCurrentPageData()?.map((data, index) => (
                       <CategoryRow
                         key={index}
                         data={data}

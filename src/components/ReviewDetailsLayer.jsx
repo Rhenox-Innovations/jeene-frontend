@@ -1,11 +1,11 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Endpoints } from "../helper/common/Endpoint";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { ReviewStatus } from "../helper/common/Enum";
+import { ReactionType, ReviewStatus } from "../helper/common/Enum";
 import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
 import { useSelector } from "react-redux";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import apiRequest from "../helper/axios";
 import { ThreeDots } from "react-loader-spinner";
@@ -16,7 +16,11 @@ const ReviewDetailsLayer = () => {
   const { state } = useLocation();
   const navigate = useNavigate()
   const dispatch = useDispatch();
-
+ 
+  useEffect(() => {
+    loadData()
+  },
+  [])
   const permissions = useSelector((state) => state?.auth?.permissions);
   const [selectedReviewId, setSelectedReviewId] = useState(null);
   const [showStatusPopup, setShowStatusPopup] = useState();
@@ -91,6 +95,15 @@ const ReviewDetailsLayer = () => {
     var date = new Date(dateTimeString);
     return `${("0"+(date.getDate())).slice(-2)}-${("0"+(date.getMonth()+1)).slice(-2)}-${date.getFullYear()} ${("0"+(date.getHours())).slice(-2)}:${("0"+(date.getMinutes())).slice(-2)}:${("0"+(date.getSeconds())).slice(-2)}`
   }
+
+  const getTotalLikes = () => {
+    return review?.reactions?.length > 0 ? review.reactions?.filter(x => x.reactionType == ReactionType.Agree)?.length : 0
+  }
+
+  const getTotalDislikes = () => {
+    return review?.reactions?.length > 0 ? review.reactions?.filter(x => x.reactionType == ReactionType.Disagree)?.length : 0
+  }
+
   return (
     <>
       <Modal
@@ -224,27 +237,33 @@ const ReviewDetailsLayer = () => {
                             
                           </>
                         ) : review?.status == ReviewStatus.Approved ? (
-                          <button
-                            type="button"
-                            className="btn btn-outline-warning-600 radius-8 px-20 py-11"
-                            onClick={() =>
-                              openStatusPopup(review?.id, ReviewStatus.Rejected)
-                            }
-                            title="Reject Review"
-                          >
-                           Reject
-                          </button>
+                           <button
+                              type="button"
+                              className="btn btn-outline-warning-600 radius-8 px-20 py-11"
+                              onClick={() =>
+                                openStatusPopup(
+                                  review?.id,
+                                  ReviewStatus.Rejected
+                                )
+                              }
+                              title="Reject Review"
+                            >
+                              Reject
+                            </button>
                         ) : (
                           <button
-                            type="button"
-                            className="bg-success-focus bg-hover-success-200 text-success-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
-                            onClick={() =>
-                              openStatusPopup(review?.id, ReviewStatus.Approved)
-                            }
-                            title="Approve Review"
-                          >
-                            Approve
-                          </button>
+                              type="button"
+                              className="btn btn-outline-success-600 radius-8 px-20 py-11"
+                              onClick={() =>
+                                openStatusPopup(
+                                  review?.id,
+                                  ReviewStatus.Approved
+                                )
+                              }
+                              title="Approve Review"
+                            >
+                              Approve
+                            </button>
                         ))}
                         {permissions?.includes("/delete-review") &&
                           <button className="btn btn-outline-danger-600 radius-8 px-20 py-11" onClick={() => openDeletePopup(review?.id)}>
@@ -381,24 +400,34 @@ const ReviewDetailsLayer = () => {
                     </div>
                   )}
                 </div>
-                <div className="row mb-24">
-                    {review?.userRatings?.length > 0 && <div className="col-md-12 d-flex align-items-end">
+                <div className="row">
+                  {review?.userRatings?.length > 0 && 
                       <div className="col-md-3 mb-10">
                       <h6 className="text-md">Average Rating</h6>
                       <span>{(review?.userRatings?.reduce((a, b) => a + b.value, 0) / review?.userRatings?.length).toFixed(2)}</span>
                     </div>
-                    <div className="col-md-6 d-flex justify-content-between align-items-center">
+                    
+                  }
+                </div>
+                <div className="row mb-24">
+                  <div className="col-md-6 d-flex justify-content-between align-items-center">
                       {
                         review?.userRatings?.map((rating) => <>
                             <h6 className="text-sm mb-0">{rating?.ratingParameter?.name}</h6>
                             <span className="text-sm">{rating?.value.toFixed(2)}</span>
                         </>)
-                      }
+                      } 
                     </div>
-                  </div>
-                  }
-
-                  
+                </div>
+                <div className="row mb-24">
+                    <div className="col-md-3">
+                         <h6 className="text-md">No. of Likes</h6>
+                        <span>{getTotalLikes()}</span>
+                    </div>
+                    <div className="col-md-3">
+                         <h6 className="text-md">No. of Dislikes</h6>
+                        <span>{getTotalDislikes()}</span>
+                    </div>
                 </div>
                 <hr />
                 <div className="mt-24 w-30">

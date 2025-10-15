@@ -219,7 +219,7 @@ const SubsubCategoriesListLayer = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {getCurrentPageData()?.map((data, index) => (
+                    {subCategoriesList?.length === 0 ? <tr><td>No records found.</td></tr> :    getCurrentPageData()?.map((data, index) => (
                       <CategoryRow
                         key={index}
                         data={data}
