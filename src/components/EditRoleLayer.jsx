@@ -19,7 +19,7 @@ const EditRoleLayer = () => {
   const [permissions, setPermissions] = useState(state?.permissions);
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  
+
   if(!state){
     navigatePage(navigate, dispatch, "/roles-list", null)
   }
@@ -90,14 +90,14 @@ const EditRoleLayer = () => {
         path: ""
     }];
     SIDE_BAR_CONFIG.forEach((item) => {
-        list = [...list, ...item.children]
+        list = [...list, { title: item.title, divider: item.path != "/" }, ...item.children]
     });
     return list;
   }
 
   const onPermissionsChange = (values) => {
     if(values.includes("")){
-        var list = getSideBarConfigOptions().filter(x => x.path != "")
+        var list = getSideBarConfigOptions().filter(x => x.path != "" && !x.divider)
         list = list.map(x => x.path)
         setPermissions(list)
     }else{
@@ -166,6 +166,9 @@ const EditRoleLayer = () => {
                             label=""
                             values={permissions}
                             options={getSideBarConfigOptions()?.map((x) => {
+                              if(x.divider == true){
+                                return { label: x.title, value: "", isDisabled: true };
+                              }
                               return { label: x.title, value: x.path };
                             })}
                             onChange={onPermissionsChange}
@@ -175,6 +178,17 @@ const EditRoleLayer = () => {
                                 "All permissions are selected",
                               msgNoOptionsMatchFilter:
                                 "No permission matches the filter",
+                              MenuProps: {
+                                PaperProps: {
+                                  sx: {
+                                    '& .MuiMenuItem-root.Mui-disabled': {
+                                      color: '#000000ff',
+                                      backgroundColor: '#949494ff',
+                                      fontStyle: 'italic',
+                                    },
+                                  },
+                                }}
+                                ,
                             }}
                           />
                    

@@ -348,7 +348,8 @@ const UsersListLayer = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {getCurrentPageData()?.map((data, index) =>
+                  {userList?.length === 0 ? <tr><td>No records found.</td></tr> : 
+                    getCurrentPageData()?.map((data, index) =>
                     <UserRow key={index} data={data} index={index} openDeletePopup={openDeletePopup} openStatusPopup={openStatusPopup}/>
                   )}
                 </tbody>
@@ -451,7 +452,7 @@ const UserRow = ({data, index, openDeletePopup, openStatusPopup}) => {
         )}
       </td>
       <td className="text-center">
-        <div className="d-flex align-items-center gap-10 justify-content-center">
+        <div className="d-flex align-items-center gap-10 justify-content-start">
           {
             permissions?.includes("/view-user-profile") &&
             <button
@@ -474,8 +475,8 @@ const UserRow = ({data, index, openDeletePopup, openStatusPopup}) => {
               <Icon icon="lucide:edit" className="menu-icon" />
             </button>
           }
-         {
-           permissions?.includes("/delete-user") &&
+          {
+           data?.roles?.[0] != "Admin" && permissions?.includes("/delete-user") && 
             <button
                 type="button"
                 className="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
@@ -485,9 +486,10 @@ const UserRow = ({data, index, openDeletePopup, openStatusPopup}) => {
               >
                 <Icon icon="fluent:delete-24-regular" className="menu-icon" />
               </button>
-         } 
-          {
-            permissions?.includes("/activate-block-user") && data?.isActive ? <button
+          } 
+          
+          {data?.roles?.[0] != "Admin" && 
+            <>{ permissions?.includes("/activate-block-user") && data?.isActive ? <button
             type="button"
             className="bg-warning-focus bg-hover-warning-200 text-warning-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
             onClick={() => openStatusPopup(data?.id, "Block")}
@@ -506,7 +508,7 @@ const UserRow = ({data, index, openDeletePopup, openStatusPopup}) => {
           >
             <Icon icon="fa6-solid:check" className="menu-icon" />
           </button>
-          }
+            }</>}
         </div>
       </td>
     </tr>

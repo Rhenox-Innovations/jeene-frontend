@@ -10,5 +10,10 @@ const ReviewStatus = {
     Approved: 2,
     Rejected: 3
 }
-export {UserRole, ReviewStatus};
+
+const ReactionType = {
+    Agree: 1,
+    Disagree: 2
+}
+export {UserRole, ReviewStatus, ReactionType};
 

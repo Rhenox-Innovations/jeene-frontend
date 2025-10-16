@@ -226,6 +226,11 @@ const ViewProfileLayer = ({ page }) => {
         }
     }
   }
+
+  const getDateTime = (dateTimeString) => {
+    var date = new Date(dateTimeString);
+    return `${("0"+(date.getDate())).slice(-2)}-${("0"+(date.getMonth()+1)).slice(-2)}-${date.getFullYear()} ${("0"+(date.getHours())).slice(-2)}:${("0"+(date.getMinutes())).slice(-2)}:${("0"+(date.getSeconds())).slice(-2)}`
+  }
   return (
     <div className="row gy-4">
       <div className="col-lg-4">
@@ -320,7 +325,7 @@ const ViewProfileLayer = ({ page }) => {
                       Joining Date
                     </span>
                     <span className="w-70 text-secondary-light fw-medium">
-                      {joiningDate ? new Date(joiningDate).toDateString() : "N/A"}
+                      {joiningDate ? getDateTime(joiningDate) : "N/A"}
                     </span>
                   </li>   
                   {
