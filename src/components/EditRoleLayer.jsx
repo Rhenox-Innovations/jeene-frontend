@@ -176,7 +176,7 @@ const EditRoleLayer = () => {
                               isCreatable: true,
                               msgNoOptionsAvailable:
                                 "All permissions are selected",
-                              msgNoOptionsMatchFilter:
+                              msgNoOptionsMatchFilter: 
                                 "No permission matches the filter",
                               MenuProps: {
                                 PaperProps: {
