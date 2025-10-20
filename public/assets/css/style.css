@@ -13862,6 +13862,10 @@ td.fc-header-center {
   transition: all 0.3s;
 }
 
+.review-slider-container {
+    width: 40%;
+    height: 40%;
+}
 @media (min-width: 1200px) {
   .dashboard-main {
     margin-inline-start: 13.75rem;
