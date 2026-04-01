@@ -20,6 +20,8 @@ const UsersListLayer = () => {
   const [loading, setLoading] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const [showPopup, setShowPopup] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [showStatusPopup, setShowStatusPopup] = useState();
@@ -28,6 +30,7 @@ const UsersListLayer = () => {
   const [role, setRole] = useState("");
   const [status, setStatus] = useState("");
   const [verified, setVerified] = useState("");
+  
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -37,13 +40,15 @@ const UsersListLayer = () => {
     getRoleData();
   }, []);
 
-  const getUserData = async () => {
-    setLoading(true);
-    const response = await apiRequest.get(Endpoints.GET_ALL_USER_DETAILS);
+  const getUserData = async (currentPageIn) => {
+    setLoading(true)
+    const response = await apiRequest.get(Endpoints.GET_ALL_USER_DETAILS + "?pageSize=" + pageSize + "&pageNumber=" + (currentPageIn ? currentPageIn : currentPage));
     setLoading(false);
     if (response && response.data) {
       setUserList(response.data.data);
       setUserListOld(response.data.data);
+      setTotalPages(response.data.totalPages);
+      setTotalCount(response.data.totalCount);
     }
   };
 
@@ -81,12 +86,6 @@ const UsersListLayer = () => {
     } else {
       setUserList(userListOld);
     }
-  };
-
-  const getCurrentPageData = () => {
-    const startIndex = (currentPage - 1) * pageSize;
-    const endIndex = Math.min(startIndex + pageSize, userList?.length);
-    return userList?.slice(startIndex, endIndex);
   };
 
   const openDeletePopup = (userId) => {
@@ -153,7 +152,6 @@ const UsersListLayer = () => {
   }
 
   const filterButtonClick = () => {
-    debugger
     var userListFiltered = userListOld;
     if (status === "Active") {
       userListFiltered = userListFiltered.filter((x) => x.isActive);
@@ -171,6 +169,7 @@ const UsersListLayer = () => {
       userListFiltered = userListFiltered.filter((x) => !x.emailConfirmed);
     }
     setUserList(userListFiltered);
+    setCurrentPage(1)
   }
 
   return (
@@ -350,16 +349,18 @@ const UsersListLayer = () => {
                 </thead>
                 <tbody>
                   {userList?.length === 0 ? <tr><td>No records found.</td></tr> : 
-                    getCurrentPageData()?.map((data, index) =>
+                   userList?.map((data, index) =>
                     <UserRow key={index} data={data} index={index} openDeletePopup={openDeletePopup} openStatusPopup={openStatusPopup}/>
                   )}
                 </tbody>
               </table>
               <Paginator
-                totalRows={userList?.length}
+                totalRows={totalCount}
                 pageSize={pageSize}
+                currentPage={currentPage}
                 onPageChange={(currentPage) => {
                   setCurrentPage(currentPage);
+                  getUserData(currentPage);
                 }}
               />
             </>

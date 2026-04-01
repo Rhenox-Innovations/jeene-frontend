@@ -2,13 +2,10 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Icon } from "@iconify/react";
 
-const Paginator = ({ totalRows, pageSize, onPageChange }) => {
-  const [currentPage, setCurrentPage] = useState(1);
-
+const Paginator = ({ currentPage, totalRows, pageSize, onPageChange }) => {
   const totalPages = Math.ceil(totalRows / pageSize);
 
   const handlePageChange = (page) => {
-    setCurrentPage(page);
     if (onPageChange) {
       onPageChange(page);
     }
