@@ -321,6 +321,7 @@ const ViewProfileLayer = ({ page }) => {
                       {" "}
                       Joining Date
                     </span>
+                      
                     <span className="w-70 text-secondary-light fw-medium">
                       {joiningDate ? getDateTime(joiningDate) : "N/A"}
                     </span>
