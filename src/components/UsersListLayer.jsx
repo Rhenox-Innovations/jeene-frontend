@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { navigatePage } from "../helper/common/Navigation";
 import numeral from "numeral";
+import {getDateTime} from "../helper/common/Formatters";
 
 const UsersListLayer = () => {
   const [userList, setUserList] = useState([]);
@@ -421,7 +422,7 @@ const UserRow = ({data, index, openDeletePopup, openStatusPopup}) => {
       </td>
       <td>
         <span className="text-md mb-0 fw-normal text-secondary-light">
-          {joiningDate.toDateString()}
+          {getDateTime(joiningDate, true)}
         </span>
       </td>
       <td>

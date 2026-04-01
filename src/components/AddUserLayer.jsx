@@ -18,7 +18,8 @@ const AddUserLayer = () => {
       try{
         const response = await apiRequest.get(Endpoints.GET_ROLES);
         if(response?.data?.data){
-          setRoleList(response.data.data);
+            const filtered = (response.data.data || []).filter(r => r?.name !== 'Admin');
+            setRoleList(filtered);
         }
       }catch(e){
         // silently ignore; dropdown will show static placeholder

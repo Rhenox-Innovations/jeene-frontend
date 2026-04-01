@@ -13901,5 +13901,17 @@ td.fc-header-center {
   background-color: var(--white);
   margin-block-start: auto;
 }
+.css-1nmdiq5-menu {
+    [aria-disabled="true"] {
+        background-color: #bababa;
+        color: #4c4c4c;
+        pointer-events: none;
+        border-bottom: 1px solid #000;
+    }
+}
+
+.custom-datepicker .react-datepicker__current-month {
+    font-size: 0.875rem !important;
+}
 
 /* === footer css end === */

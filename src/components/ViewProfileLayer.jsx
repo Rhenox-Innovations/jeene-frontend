@@ -8,6 +8,7 @@ import { ThreeDots } from "react-loader-spinner";
 import { useDispatch } from "react-redux";
 import { updateUserData } from "../redux/actions/authSlice";
 import { useLocation } from "react-router-dom";
+import {getDateTime} from "../helper/common/Formatters";
 
 const ViewProfileLayer = ({ page }) => {
   const { state } = useLocation();
@@ -226,11 +227,7 @@ const ViewProfileLayer = ({ page }) => {
         }
     }
   }
-
-  const getDateTime = (dateTimeString) => {
-    var date = new Date(dateTimeString);
-    return `${("0"+(date.getDate())).slice(-2)}-${("0"+(date.getMonth()+1)).slice(-2)}-${date.getFullYear()} ${("0"+(date.getHours())).slice(-2)}:${("0"+(date.getMinutes())).slice(-2)}:${("0"+(date.getSeconds())).slice(-2)}`
-  }
+  
   return (
     <div className="row gy-4">
       <div className="col-lg-4">

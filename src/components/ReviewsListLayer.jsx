@@ -10,6 +10,9 @@ import { ReviewStatus } from "../helper/common/Enum";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { navigatePage } from "../helper/common/Navigation";
+import {getDateTime} from "../helper/common/Formatters";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const ReviewsListLayer = () => {
   const [reviewList, setReviewList] = useState([]);
@@ -458,22 +461,21 @@ const ReviewsListLayer = () => {
                   <option value="2">Approved</option>
                   <option value="3">Rejected</option>
                 </select>
-                <input
-                  type="date"
-                  className="bg-base form-control h-40-px w-auto"
-                  name="startDate"
-                  placeholder="Start Date"
-                  onChange={(e) => setStartDate(e.target.value)}
-                  value={startDate}
-                />
-                <input
-                  type="date"
-                  className="bg-base form-control h-40-px w-auto"
-                  name="endDate"
-                  placeholder="End Date"
-                  onChange={(e) => setEndDate(e.target.value)}
-                  value={endDate}
-                />
+                  <DatePicker
+                      selectsRange
+                      startDate={startDate}
+                      endDate={endDate}
+                      onChange={(dates) => {
+                          const [start, end] = dates;
+                          setStartDate(start);
+                          setEndDate(end);
+                      }}
+                      placeholderText="Select date range"
+                      className="bg-base form-control h-40-px w-auto"
+                      dateFormat="MM/dd/yyyy"
+                      calendarClassName="custom-datepicker"
+                      maxDate={startDate ? new Date(new Date(startDate).setMonth(new Date(startDate).getMonth() + 6)) : null}
+                  />
               </form>
               <button
                 type="button"
@@ -555,10 +557,7 @@ const ReviewRow = ({ data, index, openDeletePopup, openStatusPopup }) => {
   };
 
   const postedDateTime = new Date(data?.postedDateTime);
-  const getDateTime = (dateTimeString) => {
-    var date = new Date(dateTimeString);
-    return `${("0"+(date.getDate())).slice(-2)}-${("0"+(date.getMonth()+1)).slice(-2)}-${date.getFullYear()} ${("0"+(date.getHours())).slice(-2)}:${("0"+(date.getMinutes())).slice(-2)}:${("0"+(date.getSeconds())).slice(-2)}`
-  }
+  
   return (
     <tr key={index}>
       {/* <td>
