@@ -18,7 +18,7 @@ const ReviewsListLayer = () => {
     const [reviewList, setReviewList] = useState([]);
     const [reviewOldList, setReviewListOld] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [pageSize, setPageSize] = useState(5);
+    const [pageSize, setPageSize] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
